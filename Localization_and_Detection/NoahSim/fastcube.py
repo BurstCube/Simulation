@@ -1,10 +1,18 @@
-#The following cell contains the "FastCube" class. This is the simulation I hope to use to be able to run quicker simulations. 
-#Import dependencies
+"""The following cell contains the "FastCube" class. 
+This is the simulation I hope to use emulate the results of state of the art simulations on GRB localization,
+and use these results to characterize the burstcube spacecraft. 
+
+For questions/comments please contact me, Noah Kasmanoff, at nkasmanoff@gmail.com 
+or https://github.com/nkasmanoff
+
+"""
+
+#Import dependencies, as listed below.
 from numpy import rad2deg,deg2rad,pi,sqrt,add,array,average
 from healpy import ang2vec, newvisufunc
 
 
-#sometimes one way works, sometimes another one does. Here's a workaround. 
+#sometimes one import method works, sometimes another one does. Here's a quick fix.  
 try:
     from NoahSim import burstutils as bf
 except:
@@ -107,14 +115,14 @@ class FastCube():
 
         print("Testing a burst @ " + str(rad2deg([sourcetheta, sourcephi])))
 
-    #These are the values that get thrown into the solver. Basically they create an interval of possible sources of the sky, and will be used for a best fit down the line. 
+    #The range and bin size of values used to generate cost of fitting, 
         bottheta = 0
-        toptheta = 90
+        toptheta = 180
         botphi = 0 
         topphi = 360
         botA = 0
         topA = 1000
-        ntheta = 10   #over sky chi points
+        ntheta = 20   #over sky chi points
         nphi = 37
         nA = 100
 
@@ -255,9 +263,10 @@ class FastCube():
             nA = 100
 
         else:
+            #range of values used in the fitting. 
             sample = len(GRB.sourceangs)   #number of GRBs you're testing
             bottheta = 0   #zenith
-            toptheta = 120  #(elevation) range of theta values   horizon
+            toptheta = 180  #(elevation) range of theta values   horizon
             ntheta = 31   #over sky chi points  #binning
 
             botphi = 0 #azimuthal angles
