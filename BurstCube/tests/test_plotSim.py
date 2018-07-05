@@ -21,3 +21,5 @@ def test_getGBMdata():
                      30.818037, 32.459995])
 
     assert_allclose(aeff, gbmdata['aeff'], 1e-3)
+
+    
