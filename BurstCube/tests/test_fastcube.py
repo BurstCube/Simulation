@@ -6,7 +6,6 @@ from astropy.tests.helper import pytest
 
 @pytest.fixture(scope='module')
 def create_sky(request):
-
         testsim = GRBgenerator.Sky(1, 500)
 
         return testsim
