@@ -103,12 +103,12 @@ class Detector(object):
             y = self._grb.counts
 
         bkgrd = self.background_rate*np.ones_like(y)
-        y = np.maximum(0.001*bkgrd,y)
-        #bkgrd = self.background_rate*np.ones(self._grb.T0+len(y))
-        #y = np.maximum(bkgrd,np.concatenate([np.zeros(self._grb.T0),y]))
+        y = np.maximum(0.001*bkgrd, y)
+        # bkgrd = self.background_rate*np.ones(self._grb.T0+len(y))
+        # y = np.maximum(bkgrd,np.concatenate([np.zeros(self._grb.T0),y]))
                         
         if self.noise:
-            #This is slow (like 560 microsecs slow)
+            # This is slow (like 560 microsecs slow)
             y = np.maximum(bkgrd,y)
             y = [np.random.poisson(point,1)[0] for point in y]
 
@@ -155,12 +155,12 @@ class Detector(object):
             self.significance = np.sum(resp_re[1:] - resp_re[:-1],axis=1)/\
                 np.sqrt(np.sum(resp_re[1:]+resp_re[:-1],axis=1))
 
-    def exposure(self, ra, dec, FoV=False):
+    def exposure(self, ra, dec, FoV=False, alt=-10.):
 
         locdb = "Test,f|V,{},{},21.26,2000".format(deg2HMS(ra),deg2DMS(dec))
         test_point = eph.readdb(locdb)
         test_point.compute(self.obs)
-        if test_point.alt < -10.*np.pi/180.:
+        if test_point.alt < alt*np.pi/180.:
             return 0.0
         else:
             if FoV:
