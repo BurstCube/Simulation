@@ -49,6 +49,10 @@ class Spacecraft(object):
                                           lat=self.lat,
                                           elev=self.elev)
 
+        @property
+        def detnum(self):
+                return len(self.detectors)
+
         def throw_grb(self, grb):
 
                 return [detector.throw_grb(grb) for detector in self.detectors]
@@ -59,8 +63,10 @@ class Spacecraft(object):
                 grb_sample = [[detector.throw_grb(grb)
                                for detector in self.detectors]
                               for grb in grbs]
-                grb_rec = np.zeros((len(grb_sample), 12), dtype=float)
-                grb_rec_err = np.zeros((len(grb_sample), 12), dtype=float)
+                grb_rec = np.zeros((len(grb_sample),
+                                    self.detnum), dtype=float)
+                grb_rec_err = np.zeros((len(grb_sample),
+                                        self.detnum), dtype=float)
 
                 [[grb_rec.itemset((i, int(det['name']) - 1), det['counts'])
                   for det in sample]
