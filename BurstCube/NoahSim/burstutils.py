@@ -360,12 +360,9 @@ def response(A,x):
     R = pow(abs(np.cos(A)),x)
     #How I fix the angle stuff now. 
     mask = A > np.pi/2
-    if np.shape(R) == ():
-        return R
-    else:
-        R[mask] = 0
-        return R
-    
+    return R
+
+
 def chiresponse(A,x):
     """
     

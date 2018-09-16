@@ -1,22 +1,8 @@
+In the "out with the old" notebook, I've updated the simulation so now it runs lightyears faster than the initial code. 
 
-Added this branch to work on creating a lookup table to simulate the potential shadowing effects that will influence certain detectors onboard BurstCube.
+It still retains the same capabilities, and is now actually a useful tool for scientific use!
 
-
-The work is done. Here's what I should do in front of Jeremy to make sure it doesn't get screweed up. 
-
-Move the python files into the proper space. 
-
-run the tests
-
-push to master
-
-check 
-
-These tests should be working, I don't understand what's happening so that it doesn't read in "GRBgenerator.py etc. "
-
-
-
-
+What's left is to update the functions used to deploy the simulation, print out a few plots, and try out a couple of alternating versions to track their effectiveness. 
 
 
 
