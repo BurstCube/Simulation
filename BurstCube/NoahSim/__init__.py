@@ -19,3 +19,8 @@ try:
 except:
     print("burstutils module is not importing. Please check your path before proceeding.")
     
+
+try:
+	import pandas
+except:
+    print("Pandas module is not installed. Please enter 'pip install pandas' before proceeding.")
