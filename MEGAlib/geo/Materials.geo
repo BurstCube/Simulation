@@ -93,7 +93,32 @@ Densimet180.ComponentByMass       Ni   0.44
 
 Material Diamant
 Diamant.Density               3.51
-Diamant.Component             C  1  
+Diamant.Component             C  1 
+
+//This is taken from here this is Silicone: 
+// https://eljentechnology.com/products/accessories/ej-560
+// https://en.wikipedia.org/wiki/Silicone_rubber
+Material EJ560
+EJ560.Density			1.03
+EJ560.Component             	Si  1  
+EJ560.Component             	O   1
+
+//This is taken from here: 
+// https://www.engineeringtoolbox.com/engineering-materials-properties-d_1225.html
+// https://pubchem.ncbi.nlm.nih.gov/compound/169944#section=Molecular-Formula  C21H25ClO5
+Material Epoxy
+Epoxy.Density			1.25
+Epoxy.Component             	C  21  
+Epoxy.Component             	H  25
+Epoxy.Component             	Cl 1
+Epoxy.Component             	O  5
+
+//This is taken from here THIS IS TEFLON: 
+// https://en.wikipedia.org/wiki/Polytetrafluoroethylene
+Material ePTFE
+ePTFE.Density			2.2
+ePTFE.Component             	C  2  
+ePTFE.Component             	F  4
 
 Material GePassive
 GePassive.Density               5.323
@@ -166,7 +191,13 @@ Nylon.Component                N    2
 
 Material Pb
 Pb.Density               11.35
-Pb.Component             Pb  1 
+Pb.Component             Pb  1  
+
+Material PbWO4
+PbWO4.Density		8.28
+PbWO4.Component         Pb	1
+PbWO4.Component         W	1
+PbWO4.Component         O	4  
           
 Material PCB
 PCB.Density                     1.2
@@ -261,7 +292,14 @@ roTMM3.ComponentByMass    Ca     0.0022
 roTMM3.ComponentByMass    Al     0.0011        
 roTMM3.ComponentByMass    B      0.0003       
 roTMM3.ComponentByMass    Mg     0.0002        
-roTMM3.ComponentByMass    S      0.0010       
+roTMM3.ComponentByMass    S      0.0010  
+
+// Values of Silica from the internet:
+// https://en.wikipedia.org/wiki/Fused_quartz
+Material Silica
+Silica.Density                     2.2
+Silica.Component                   Si   1   
+Silica.Component                   O   2       
 
 
 Material Silicon
@@ -271,6 +309,14 @@ Silicon.Component               Si  1
 Material SiliconPIN
 SiliconPIN.Density              2.33
 SiliconPIN.Component            Si  1
+
+// taken from here: https://arxiv.org/pdf/1407.3258.pd,  http://eljentechnology.com/products/accessories/ej-560
+Material Silicone
+Silicone.Density                1.03
+Silicone.Component              C  2
+Silicone.Component 		F  4 
+//Silicone.Component            Si  1
+//Silicone.Component 		O   1 
 
 // Values of Steel are not exact, but the same as Iron:
 Material Steel
@@ -297,6 +343,12 @@ Steel_18_8.ComponentByMass      Fe   0.717
 Material SurroundingSphereVolumeMaterial
 SurroundingSphereVolumeMaterial.Density           10000.0
 SurroundingSphereVolumeMaterial.ComponentByAtoms  Pb 1
+
+//Teflon for the wrapping taken from wikipedia
+Material Teflon
+Teflon.Density			2.2
+Teflon.Component		C 2
+Teflon.Component		F 4
 
 // Values of Tin from the internet:
 Material Tin
