@@ -92,12 +92,12 @@ class BurstCube():
     #note that if you want the tilt to be alternating,
     #you need to first make this true, and then enter that value when prompted. 
     def __init__(self, background, dettilt, alternating=False):
-        if alternating is False:
+        if alternating == False:
             self.tilt = deg2rad(dettilt)
             self.tiltA = self.tiltB = self.tiltC = self.tiltD = self.tilt
         
         else:
-            self.tiltB = (float(input("Please enter the second tilt (deg) ")))
+            self.tiltB = alternating
             self.tiltB = deg2rad(self.tiltB)
             self.tiltC = self.tiltA = deg2rad(dettilt)
             self.tiltD = self.tiltB
@@ -230,7 +230,12 @@ class BurstCube():
     def response2GRB(self, GRB,test=False,talk=False):  
 
     #first need to include the GRB.
-       
+        if talk: 
+            if self.tiltB != self.tiltA:
+                print("Detector Class: " + str(rad2deg(self.tiltA)) + ' by ' + str(rad2deg(self.tiltB)) + 'degrees')
+            else: 
+                print("Detector Class: " + str(rad2deg(self.tiltA)) + ' degrees')
+ 
         """
         Respond2GRB will determine the sky position of an array of GRB sources assuming some inherent background noise within 
         detectors, along with fluctuations of either Gaussian or Poissonian nature. At the moment I'm assuming Gaussian, and to build a sufficent case
@@ -268,14 +273,14 @@ class BurstCube():
         else:
             #range of values used in the fitting. 
             skypoints = len(GRB.sourceangs)   #number of GRBs you're testing
-            nsamples = 10
+            nsamples = 13
 
         actual_responses = []
         for i in range(skypoints):  #for each grb
             
             sourceAng = GRB.sourceangs[i]
             if talk:
-                print("Testing bursts @ " + str(rad2deg(sourceAng))+", sampling it " + str(nsamples)+ " time(s)")
+                print("Testing burst @ " + str(rad2deg(sourceAng))+", sampling it " + str(nsamples)+ " time(s)")
 
             
             sourcexyz = ang2vec(sourceAng[0],sourceAng[1]) #cartesian position of the burst at this position
@@ -381,6 +386,7 @@ class BurstCube():
                 loc_offsets.append(loc_offset)
                 loc_errors.append(loc_error)
                 #convert recpos into degrees sepearaiton.
+                
             loc_offsets = array(loc_offsets)
             loc_errors = array(loc_errors)
            # nanmask = nanmask = np.isnan(locunc)
@@ -391,6 +397,7 @@ class BurstCube():
                 print(" ")
             skyvals.append(mean(loc_offsets))
             skyunc.append(mean(loc_error))
+
         skyvals = array(skyvals)
         skyunc = array(skyunc)
         return skyvals,skyunc

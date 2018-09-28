@@ -354,5 +354,6 @@ def response(A,x):
     
     R = pow(abs(np.cos(A)),x)
     #How I fix the angle stuff now. 
-    mask = A > np.pi/2
+    if A > np.pi/2:
+        R = 0
     return R
