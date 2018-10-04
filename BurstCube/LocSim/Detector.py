@@ -155,23 +155,31 @@ class Detector(object):
             self.significance = np.sum(resp_re[1:] - resp_re[:-1],axis=1)/\
                 np.sqrt(np.sum(resp_re[1:]+resp_re[:-1],axis=1))
 
-    def exposure(self, ra, dec, FoV=False, alt=-10.):
+    def polar2cart(self,theta, phi):
+        return np.array([np.sin(theta) * np.cos(phi),np.sin(theta) * np.sin(phi),np.cos(theta)])
+
+    def cart2polar(self,x,y,z):
+        theta,phi=np.array([np.arccos(z/np.sqrt(x**2+y**2+z**2)),np.arctan(y/x)])
+        if np.isnan(theta): theta=0.
+        if np.isnan(phi): phi=0.
+        return theta,phi
+
+    def exposure(self, ra, dec, FoV=False, alt=-10., index=0.77):
 
         locdb = "Test,f|V,{},{},21.26,2000".format(deg2HMS(ra),deg2DMS(dec))
         test_point = eph.readdb(locdb)
         test_point.compute(self.obs)
-        if test_point.alt < alt*np.pi/180.:
+        if test_point.alt < np.radians(alt):
             return 0.0
         else:
             if FoV:
                 return 1.0
             else:
-                sep = eph.separation((self.altitude,self.azimuth),
-                    (test_point.alt, test_point.az))
+                sep = eph.separation((self.azimuth,self.altitude),(test_point.az,test_point.alt))
                 if sep > np.pi/2.:
                     return 0.0
                 else:
-                    return np.cos(sep)
+                    return np.cos(sep)**index
 
     def throw_grb(self,grb):
         self._grb = grb
