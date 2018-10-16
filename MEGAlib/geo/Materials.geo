@@ -38,6 +38,12 @@ Alu6061.ComponentByMass       Zn   0.0025
 Alu6061.ComponentByMass       Ti   0.0015
 Alu6061.ComponentByMass       Al   0.9665
 
+// Values taken from Wikipedia: https://en.wikipedia.org/wiki/Beryllium
+// Assumes density near room temperature
+Material Beryllium
+Beryllium.Density           1.85
+Beryllium.Component         Be 1
+
 Material BGO            
 BGO.Density               7.1
 BGO.Component             Bi  4  
