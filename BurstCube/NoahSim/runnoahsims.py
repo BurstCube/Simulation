@@ -1,10 +1,10 @@
-NSIDE = 32
+NSIDE = 8
 STRENGTH = 500
 BACKGROUND = 1000
-TILT = 45
+TILT = 75
 ALTERNATING = False
 TEST = False
-TALK = False
+TALK = True
 plot = True
 #%matplotlib inline only a notebook feature. 
 
@@ -13,7 +13,7 @@ Parameters
 ----------
 
 NSIDE : int
-	A power of 2, corresponding to the number of pixels to occupy TSM (ie NSIDE = 8 => 768 pixels, etc.)
+	Must be a power of 2, corresponding to the number of pixels to occupy TSM (ie NSIDE = 8 => 768 pixels, etc.)
 
 STRENGTH : float
 	The desired strength of the incident GRBs. 
@@ -43,8 +43,11 @@ sim1 = Sky(NSIDE,STRENGTH)
 
 #run this file, and you immediately get
 testcube = BurstCube(BACKGROUND,TILT,alternating =ALTERNATING)
-_ = testcube.initialize #supress output for now, but it is now a property so we chilling. 
-
+if TALK:
+    print("Initializing...")
+_ = testcube.initialize #supress output, this creates the ideal response database for reference. 
+if TALK: 
+    print("done!")
 
 offsets , errors = testcube.response2GRB(sim1,talk=TALK,test = TEST)
 
@@ -53,18 +56,18 @@ if plot:
 #Only difference is the graphs are opened in the notebook, as opposed to saved. 
     from healpy import newvisufunc
     import matplotlib.pyplot as plt
-    newvisufunc.mollview(offsets,min=0, max=60,unit='Localization Accurary (degrees)',graticule=True,graticule_labels=True)
+    newvisufunc.mollview(offsets,min=0, max=15,unit='Localization Offset (degrees)',graticule=True,graticule_labels=True)
     if type(ALTERNATING) == int:
         plt.title('All Sky Localization Accuracy for BurstCube with Orientation ' + str(TILT) +' by '+str(ALTERNATING) +' deg' )  #should add something about design too! 
     #plt.savefig('offset'+'tilt'+str(TILT)+'s'+str(STRENGTH)+'bg'+str(BACKGROUND)+'.png')
        	plt.savefig('offset'+str(TILT)+'by'+str(ALTERNATING)+'s'+str(STRENGTH)+'bg'+str(BACKGROUND)+'.png')
 
     else:
-        plt.title('All Sky Localization Accuracy for BurstCube with Orientation ' + str(TILT) + ' deg' )  #should add something about design too! 
+        plt.title('All Sky Localization Offsets for BurstCube with Orientation ' + str(TILT) + ' deg' )  #should add something about design too! 
        	plt.savefig('offset'+str(TILT)+'s'+str(STRENGTH)+'bg'+str(BACKGROUND)+'.png')
 
     plt.figure()
-    newvisufunc.mollview(errors,min=0, max=60,unit='Localization Accurary (degrees)',graticule=True,graticule_labels=True)
+    newvisufunc.mollview(errors,min=0, max=100,unit='Localization Error (degrees)',graticule=True,graticule_labels=True)
     
     if type(ALTERNATING) == int:
         plt.title('All Sky Localization Errors for BurstCube with Orientation ' + str(TILT) +' by '+str(ALTERNATING) +' deg' )  #should add something about design too! 

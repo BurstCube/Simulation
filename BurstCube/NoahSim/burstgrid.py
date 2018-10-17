@@ -1,5 +1,5 @@
 """
-This file serves effectively as a grid search, I will be trying to tune the parameters of the burstcube model, primarily
+This file effectively serves as a grid search, I will be trying to tune the parameters of the burstcube model, primarily
  the tilt(and whether or not it will be alternating) and use this as a means to optimize / identify the best setup 
  for localization. I'm primarily concerned with how BurstCube performs when at least one detector is capable or seeing
  the burst, so will only track this effectiveness over that segment of the sky. 

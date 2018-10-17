@@ -280,9 +280,8 @@ class BurstCube():
             
             sourceAng = GRB.sourceangs[i]
             if talk:
-                print("Testing burst @ " + str(rad2deg(sourceAng))+", sampling it " + str(nsamples)+ " time(s)")
+                print("For bursts @ " + str(rad2deg(sourceAng)))
 
-            
             sourcexyz = ang2vec(sourceAng[0],sourceAng[1]) #cartesian position of the burst at this position
             loop = 0 #I'm going to want to sample each sky position more than once,
                     #here's where I define how many times that is
@@ -392,8 +391,8 @@ class BurstCube():
            # nanmask = nanmask = np.isnan(locunc)
            # locunc = locunc[~nanmask]
             if talk:
-                print("Offset: " + str(mean(loc_offsets)))
-                print("Error: " + str(mean(loc_errors)))
+                print("Avg offset: " + str(mean(loc_offsets)))
+                print("Std. Error: " + str(mean(loc_errors)))
                 print(" ")
             skyvals.append(mean(loc_offsets))
             skyunc.append(mean(loc_error))
