@@ -5,17 +5,8 @@ It still retains the same capabilities, and is now actually a useful tool for sc
 What's left is to update the functions used to deploy the simulation, print out a few plots, and try out a couple of alternating versions to track their effectiveness. 
 
 
-The method now works as follows. For any given burstcube orientation, there are 4 detectors, and due to a burst, there will be a corresponding # of counts resulting. Looking a little like this. 
+The method now works as follows. For any given burstcube orientation, there are 4 detectors, and due to a burst, there will be a corresponding # of counts resulting.
 
-
-index    A    B    C    D 
------   ---  ---  ---  ---
-some #  ai   bi   ci   di
-some #  aj   bj   cj   dj
-some #  ak   bk   ck   dk
-
-
-and so on. All these numbers
 
  Leveraging the abilities of healpy, we know that this index corresponds to a certain pixel, and with it the sky coordinates of the burst. 
 
