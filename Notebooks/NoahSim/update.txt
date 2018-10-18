@@ -1,0 +1,1 @@
+Make a documented notebooks in here, that details how to this new burstcube, and the resulting plots. 
