@@ -218,6 +218,29 @@ class BurstCube():
                 ideal_responses[i][1] = 100
                 ideal_responses[i][2] = 100
                 ideal_responses[i][3] = 100
+
+        """
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻| _
+┻┳| •.•)  This is now a pandas database  
+┳┻|⊂ﾉ     where each index is the nside pixel #, and converted into a sky position.
+┻┳|       the only limit now may be NSIDE. 
+
+
+
+
+        """
         self.ideal_data = DataFrame([])
         self.ideal_data['A'] = ideal_responses[:,0]
         self.ideal_data['B'] = ideal_responses[:,1]
@@ -355,6 +378,29 @@ class BurstCube():
                 observed_data['D'] = normalized_arr[0][3]* ones(len(self.ideal_data))
         
                 #SO NOW WITH THIS OBSERVED DATA, COMPARE TO IDEAL RESPONES. 
+
+                """
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻|
+┻┳|
+┳┻| _
+┻┳| •.•)  essentially a new column is created with the chi term
+┳┻|⊂ﾉ     and the smallest one corresponds to reconstructed position. 
+┻┳|       
+
+
+
+
+                """
                 chiterms  = (self.ideal_data - observed_data)**2 / self.ideal_data
                 observed_data['chisquared'] = chiterms.sum(axis=1)
                 chimin = observed_data['chisquared'].loc[observed_data['chisquared'] == min(observed_data['chisquared'])].index[0]
