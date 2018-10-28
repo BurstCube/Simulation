@@ -151,17 +151,17 @@ ReadOutDetectorVolume_4 Position -5. -5. -1.4
 ReadOutDetectorVolume_4.Rotation 45 0 315
 ReadOutDetectorVolume_4.Mother WorldVolume
 
+//This the space craft part
+Include $BURSTCUBE/Simulation/MEGAlib/geo/SCFrame.geo
 
-//This chunk our spacecraft
-//the tech specs say dim are block of aluminium 1x10x10 cm
-//This is to get a mass of 0.5 kg
-Volume Spacecraft
-Spacecraft.Material Aluminium
-Spacecraft.Shape BOX 0.5 5. 5.
-Spacecraft.Position 12. -5. 0.
-Spacecraft.Color 6
-Spacecraft.Visibility 1
-Spacecraft.Mother WorldVolume
+SCPlate.Position 0.0 0.0 -4.6049
+SCPlate.Mother WorldVolume
+
+SCBase.Position 0.0 0.0 -3.5
+SCBase.Mother WorldVolume
+
+SCWall.Position 0.0 0.0 1.18004
+SCWall.Mother WorldVolume
 
 
 # Base Trigger

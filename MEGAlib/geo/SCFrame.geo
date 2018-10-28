@@ -2,10 +2,10 @@
 
 //Thin plate at the bottom
 Volume SCPlate
-SCFrame.Material Aluminium
-SCFrame.Visibility 1
-SCFrame.Color 6
-SCFrame.Shape BOX 18.034225 11.70559 0.14986
+SCPlate.Material Aluminium
+SCPlate.Visibility 1
+SCPlate.Color 6
+SCPlate.Shape BOX 18.034225 11.70559 0.14986
 
 //Thicker plate on the bottom where things are mounted
 Volume SCBase
