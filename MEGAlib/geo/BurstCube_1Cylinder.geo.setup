@@ -157,18 +157,6 @@ G10Plane.Color 8
 G10Plane.Visibility 1
 G10Plane.Mother ReadOutDetectorVolume
 
-//This the space craft part
-Include $BURSTCUBE/Simulation/MEGAlib/geo/SCFrame.geo
-
-SCFrame.Position 0.0 0.0 -35
-SCFrame.Mother World
-
-SCBase.Position 0.0 0.0 -35
-SCBase.Mother World
-
-SCWall.Position 0.0 0.0 -35
-SCWall.Mother World
-
 
 # Base Trigger
 Trigger MainTrigger
