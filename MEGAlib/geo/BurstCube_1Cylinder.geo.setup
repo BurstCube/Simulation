@@ -14,7 +14,7 @@ Name My_BurstCube
 Verision 0.0
 
 SurroundingSphere 50.0 0.0 0.0 0.0 50.0
-Include $MEGALIB/resource/examples/geomega/materials/Materials.geo
+Include $BURSTCUBE/Simulation/MEGAlib/geo/Materials.geo
 
 // The Mother Volume of the Detector Configuration:
 Volume WorldVolume
@@ -156,6 +156,18 @@ G10Plane.Position 0. 0. -0.01
 G10Plane.Color 8
 G10Plane.Visibility 1
 G10Plane.Mother ReadOutDetectorVolume
+
+//This the space craft part
+Include $BURSTCUBE/Simulation/MEGAlib/geo/SCFrame.geo
+
+SCFrame.Position 0.0 0.0 -35
+SCFrame.Mother World
+
+SCBase.Position 0.0 0.0 -35
+SCBase.Mother World
+
+SCWall.Position 0.0 0.0 -35
+SCWall.Mother World
 
 
 # Base Trigger
