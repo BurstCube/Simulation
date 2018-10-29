@@ -40,9 +40,10 @@ CSICylinder.Position 0. 0. -0.05
 CSICylinder.Mother SingleCsI
 
 #Build the teflon coating around the CsI Cylinder dim are R_outter=4.59 cm, R_inner=4.54 cm, h= 1.9cm
+#From CAD drawing measurement Oct 2018 dims are R_outter=4.55 cm, R_inner=4.50cm
 Volume TeflonFrame
 TeflonFrame.Material Teflon
-#TeflonFrame.Shape TUBS  4.54 4.59 0.95  0. 360. #CK edit 
+#TeflonFrame.Shape TUBS  4.54 4.59 0.95  0. 360.
 TeflonFrame.Shape TUBS 4.50 4.55 0.95 0. 360.
 TeflonFrame.Position 0 0 -0.05
 TeflonFrame.Color 4
@@ -50,7 +51,7 @@ TeflonFrame.Visibility 1
 TeflonFrame.Mother SingleCsI
 
 #Build the vacuum gap?? around the teflon around the CsI cylinder dim are R_outter=4.54 cm, R_inner=4.49 cm, h= 1.9 cm
-#Carolyn questions why we need to add vacuum here when the whole volume is in vacuum already...
+#CK questions why we need to add vacuum here when the whole volume is in vacuum already...
 Volume VacuumFrame
 VacuumFrame.Material Vacuum
 #VacuumFrame.Shape TUBS  4.49 4.54 0.95 0. 360. #CK edit 
@@ -76,7 +77,7 @@ StickyWindow.Mother SingleCsI
 //Regina's comment: the tech specs say teflon dim are R=4.59 cm, h=0.05 cm
 #From the CAD drawing measurement Oct 2018 dims are R=4.50 cm h = 0.05 cm
 Volume TeflonWindow
-TeflonWindow.Material Epoxy
+TeflonWindow.Material Teflon
 #TeflonWindow.Shape TUBS  0. 4.59 0.025 0. 360.
 TeflonWindow.Shape TUBS  0. 4.49 0.025 0. 360.
 TeflonWindow.Position 0 0 0.925
@@ -90,7 +91,7 @@ Volume SiliconeWindowTop
 SiliconeWindowTop.Material Silicone
 #SiliconeWindowTop.Shape TUBS  0. 4.74 0.05 0. 360.
 SiliconeWindowTop.Shape TUBS 0. 4.55 0.05 0. 360.
-SiliconeWindowTop.Position 0 0 -1.05 #positon is wrong!
+SiliconeWindowTop.Position 0 0 1.0
 SiliconeWindowTop.Color 5
 SiliconeWindowTop.Visibility 1
 SiliconeWindowTop.Mother SingleCsI
