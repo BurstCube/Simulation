@@ -29,7 +29,7 @@ WorldVolume.Mother 0
 
 
 #This is the CsI Detector System
-Include BurstCube_4CylinderDetectorHead.geo
+Include FourCylinderDetectorHead.geo
 DetectorHead.Position 0 0 0
 DetectorHead.Mother WorldVolume
 
