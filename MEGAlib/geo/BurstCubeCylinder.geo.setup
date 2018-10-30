@@ -54,15 +54,15 @@ DetectorVolume_4.Mother WorldVolume
 Include $BURSTCUBE/Simulation/MEGAlib/geo/SCFrame.geo
 
 //SCPlate.Position 0.0 0.0 -4.6049
-SCPlate.Position 7.0 0.0 -7.6049
+SCPlate.Position 7.7 0.0 -7.6049
 SCPlate.Mother WorldVolume
 
 //SCBase.Position 0.0 0.0 -3.5
-SCBase.Position 7.0 0.0 -6.5
+SCBase.Position 7.7 0.0 -6.5
 SCBase.Mother WorldVolume
 
 //SCWall.Position 3.6562 0.0 1.18004
-SCWall.Position 10.6562 0.0 -1.81996
+SCWall.Position 11.3562 0.0 -1.81996
 SCWall.Mother WorldVolume
 
 
