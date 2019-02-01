@@ -26,7 +26,8 @@ Volume SingleCsI
 SingleCsI.Material Vacuum
 SingleCsI.Virtual true
 SingleCsI.Visibility 0
-SingleCsI.Shape TUBS 0. 5. 1.0 0. 360.
+SingleCsI.Shape TUBS 0. 5. 1.5 0. 360.
+
 
 
 #Single cylinder of Scintillator CsI 
@@ -54,24 +55,24 @@ TeflonFrame.Mother SingleCsI
 #CK questions why we need to add vacuum here when the whole volume is in vacuum already...
 Volume VacuumFrame
 VacuumFrame.Material Vacuum
-#VacuumFrame.Shape TUBS  4.49 4.54 0.95 0. 360. #CK edit 
+#VacuumFrame.Shape TUBS  4.49 4.54 0.95 0. 360.
 VacuumFrame.Shape TUBS 4.49 4.50 0.95 0. 360.
 VacuumFrame.Position 0 0 -0.05
 VacuumFrame.Color 9
-VacuumFrame.Visibility 1
+VacuumFrame.Visibility 0
 VacuumFrame.Mother SingleCsI
 
 
 //This chunk is the sticky bit after the Al window
 //the tech specs say Epoxy dim are R=4.59 cm, h=0.05 cm
 #CK doesnt see this in the CAD model..
-Volume StickyWindow
-StickyWindow.Material Epoxy
-StickyWindow.Shape TUBS  0. 4.59 0.025 0. 360.
-StickyWindow.Position 0 0 0.975
-StickyWindow.Color 6
-StickyWindow.Visibility 1
-StickyWindow.Mother SingleCsI
+#Volume StickyWindow
+#StickyWindow.Material Epoxy
+#StickyWindow.Shape TUBS  0. 4.59 0.025 0. 360.
+#StickyWindow.Position 0 0 0.975
+#StickyWindow.Color 6
+#StickyWindow.Visibility 1
+#StickyWindow.Mother SingleCsI
 
 #Teflon top
 //Regina's comment: the tech specs say teflon dim are R=4.59 cm, h=0.05 cm
@@ -81,7 +82,7 @@ TeflonWindow.Material Teflon
 #TeflonWindow.Shape TUBS  0. 4.59 0.025 0. 360.
 TeflonWindow.Shape TUBS  0. 4.49 0.025 0. 360.
 TeflonWindow.Position 0 0 0.925
-TeflonWindow.Color 4
+TeflonWindow.Color 3
 TeflonWindow.Visibility 1
 TeflonWindow.Mother SingleCsI
 
@@ -98,9 +99,10 @@ SiliconeWindowTop.Mother SingleCsI
 
 #This chunk is the Silicone rubber optical interface i.e. Optical Pad on below the CsI
 //Regina's comment: the tech specs say need this window above glass. Dim are R=4.74 cm, h=0.1 cm
+#From CAD model Oct 2018 dims are R_outer = 4.775cm
 Volume SiliconeWindowBottomOne
 SiliconeWindowBottomOne.Material Silicone
-SiliconeWindowBottomOne.Shape TUBS  0. 4.74 0.05 0. 360. # CAD model gives 4.775cm
+SiliconeWindowBottomOne.Shape TUBS 0. 4.775 0.05 0. 360.
 SiliconeWindowBottomOne.Position 0 0 -1.05
 SiliconeWindowBottomOne.Color 5
 SiliconeWindowBottomOne.Visibility 1
@@ -112,22 +114,22 @@ SiliconeWindowBottomOne.Mother SingleCsI
 Volume GlassWindow
 GlassWindow.Material Silica
 #GlassWindow.Shape TUBS  0. 4.74 0.15 0. 360.
-GlassWindow.Shape TUBS 0. 4.825 0.15 0. 360. #CK from CAD model
+GlassWindow.Shape TUBS 0. 4.825 0.15 0. 360.
 GlassWindow.Position 0 0 -1.25
-GlassWindow.Color 7
+GlassWindow.Color 6
 GlassWindow.Visibility 1
 GlassWindow.Mother SingleCsI
 
 #This chunk is the Silicone rubber optical interface i.e. Optical Pad below the Quartz window
 //Regina's comment: the tech specs say need this window above glass. Dim are R=4.74 cm, h=0.1 cm
 # From the CAD model Oct 2018 dims are R = 4.75 cm
-Volume SiliconeWindowBottom
-SiliconeWindowBottom.Material Silicone
-SiliconeWindowBottom.Shape TUBS  0. 4.74 0.05 0. 360.
-SiliconeWindowBottom.Position 0 0 -1.45
-SiliconeWindowBottom.Color 5
-SiliconeWindowBottom.Visibility 1
-SiliconeWindowBottom.Mother SingleCsI
+Volume SiliconeWindowBottomTwo
+SiliconeWindowBottomTwo.Material Silicone
+SiliconeWindowBottomTwo.Shape TUBS  0. 4.74 0.05 0. 360.
+SiliconeWindowBottomTwo.Position 0 0 -1.45
+SiliconeWindowBottomTwo.Color 5
+SiliconeWindowBottomTwo.Visibility 1
+SiliconeWindowBottomTwo.Mother SingleCsI
 
 # Quartz Epoxy ring surrounding Quartz window made up two parts with different inner radii
 Volume QuartzEpoxyRingOne
