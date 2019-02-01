@@ -56,38 +56,47 @@ AlMount.Mother AlMountFlatMount
 
 Volume AlMountArm
 AlMountArm.Material Aluminium
-AlMountArm.Shape GTRA 0.497 26.565 0 0 0.2826 1.285 1.285 0 0.2826 0.788 0.788 0
-AlMountArm.Position 4.9 0 -3.2
-AlMountArm.Rotation 0 45 0
-AlMountArm.Color 3
-AlMountArm.Visibility 1
-AlMountArm.Mother AlMountFlatMount
+AlMountArm.Shape GTRA 0.497 26.565 0 0 0.2826 2.39 2.39 0 0.2826 1.89 1.89 0
+
+AlMountArm.Copy AlMountArm1
+AlMountArm1.Position 5.65 0 -3.95
+AlMountArm1.Rotation 0 45 0
+AlMountArm1.Color 3
+AlMountArm1.Visibility 1
+AlMountArm1.Mother AlMountFlatMount
 
 AlMountArm.Copy AlMountArm2
-AlMountArm2.Position -4.9 0 -3.2
+AlMountArm2.Position -5.65 0 -3.95
 AlMountArm2.Rotation 0 45 180
 AlMountArm2.Color 3
 AlMountArm2.Visibility 1
 AlMountArm2.Mother AlMountFlatMount
 
-Volume AlMountScrewMount
-AlMountScrewMount.Material Aluminium
-AlMountScrewMount.Shape BRIK 0.651 0.6425 0.2826
-AlMountScrewMount.Position 6.0 0 -4.5
-AlMountScrewMount.Rotation 90 45 0
-AlMountScrewMount.Color 3
-AlMountScrewMount.Visibility 1
-AlMountScrewMount.Mother AlMountFlatMount
+Volume AlBaseMount
+AlBaseMount.Material Aluminium
+AlBaseMount.Shape GTRA 1.446 -9.87 0 0 0.337 3.8 3.8 0 0.337 2.267 2.267 0
 
+AlBaseMount.Copy AlBaseMount1
+AlBaseMount1.Position -3.541 -2.4 -1.837
+AlBaseMount1.Rotation 90 0 -54.74
+AlBaseMount1.Color 4
+AlBaseMount1.Visibility 1
+AlBaseMount1.Mother CylindricalHousing
 
-AlMountScrewMount.Copy AlMountScrewMount2
-AlMountScrewMount2.Position -6.0 0 -4.5
-AlMountScrewMount2.Rotation 90 45 180
-AlMountScrewMount2.Color 3
-AlMountScrewMount2.Visibility 1
-AlMountScrewMount2.Mother AlMountFlatMount
+AlBaseMount.Copy AlBaseMount2
+AlBaseMount2.Position 3.541 -2.4 -1.837
+AlBaseMount2.Rotation 90 180 54.74
+AlBaseMount2.Color 4
+AlBaseMount2.Visibility 1
+AlBaseMount2.Mother CylindricalHousing
 
-
+Volume AlBaseMountCutout
+AlBaseMountCutout.Material Vacuum
+AlBaseMountCutout.Shape TUBS 2 4.87 0.337 0 360
+AlBaseMountCutout.Position 0 0 -1.837
+AlBaseMountCutout.Color 4
+AlBaseMountCutout.Visibility 1
+AlBaseMountCutout.Mother CylindricalHousing
 
 
 
