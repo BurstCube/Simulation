@@ -31,14 +31,14 @@ DetectorHead.Shape BRIK 50.0 50.0 50.0
 
 
 #Detector1
-# What did Regina get the x- and y-coorindates of the detectors
+# Where did Regina get the x- and y-coorindates of the detectors
 SingleCsI.Copy DetectorVolume_1
-DetectorVolume_1 Position 5.0 5.0 0.
+DetectorVolume_1 Position 4.91 4.91 0.
 DetectorVolume_1.Rotation 45 0 135
 DetectorVolume_1.Mother DetectorHead
 
-CylindricalHousing.Copy DetectorHousing_1
-DetectorHousing_1 Position 5.0 5.0 0.
+AlHousing.Copy DetectorHousing_1
+DetectorHousing_1 Position 4.91 4.91 0.
 DetectorHousing_1.Rotation 45 0 135
 DetectorHousing_1.Mother DetectorHead
 
@@ -51,12 +51,12 @@ DetectorHousing_1.Mother DetectorHead
 
 #Detector2
 SingleCsI.Copy DetectorVolume_2
-DetectorVolume_2 Position -5.0 5.0 0.
+DetectorVolume_2 Position -4.91 4.91 0.
 DetectorVolume_2.Rotation 45 0 225
 DetectorVolume_2.Mother DetectorHead
 
-CylindricalHousing.Copy DetectorHousing_2
-DetectorHousing_2 Position -5.0 5.0 0.
+AlHousing.Copy DetectorHousing_2
+DetectorHousing_2 Position -4.91 4.91 0.
 DetectorHousing_2.Rotation 45 0 225
 DetectorHousing_2.Mother DetectorHead
 
@@ -69,12 +69,12 @@ DetectorHousing_2.Mother DetectorHead
 
 #Detector3
 SingleCsI.Copy DetectorVolume_3
-DetectorVolume_3 Position 5.0 -5.0 0.
+DetectorVolume_3 Position 4.91 -4.91 0.
 DetectorVolume_3.Rotation 45 0 45
 DetectorVolume_3.Mother DetectorHead
 
-CylindricalHousing.Copy DetectorHousing_3
-DetectorHousing_3 Position 5.0 -5.0 0.
+AlHousing.Copy DetectorHousing_3
+DetectorHousing_3 Position 4.91 -4.91 0.
 DetectorHousing_3.Rotation 45 0 45
 DetectorHousing_3.Mother DetectorHead
 
@@ -87,12 +87,12 @@ DetectorHousing_3.Mother DetectorHead
 
 #Detector4
 SingleCsI.Copy DetectorVolume_4
-DetectorVolume_4 Position -5.0 -5.0 0.
+DetectorVolume_4 Position -4.91 -4.91 0.
 DetectorVolume_4.Rotation 45 0 315
 DetectorVolume_4.Mother DetectorHead
 
-CylindricalHousing.Copy DetectorHousing_4
-DetectorHousing_4 Position -5.0 -5.0 0.
+AlHousing.Copy DetectorHousing_4
+DetectorHousing_4 Position -4.91 -4.91 0.
 DetectorHousing_4.Rotation 45 0 315
 DetectorHousing_4.Mother DetectorHead
 

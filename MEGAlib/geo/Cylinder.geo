@@ -47,7 +47,7 @@ TeflonFrame.Material Teflon
 #TeflonFrame.Shape TUBS  4.54 4.59 0.95  0. 360.
 TeflonFrame.Shape TUBS 4.50 4.55 0.95 0. 360.
 TeflonFrame.Position 0 0 -0.05
-TeflonFrame.Color 4
+TeflonFrame.Color 8
 TeflonFrame.Visibility 1
 TeflonFrame.Mother SingleCsI
 
@@ -127,7 +127,7 @@ Volume SiliconeWindowBottomTwo
 SiliconeWindowBottomTwo.Material Silicone
 SiliconeWindowBottomTwo.Shape TUBS  0. 4.74 0.05 0. 360.
 SiliconeWindowBottomTwo.Position 0 0 -1.45
-SiliconeWindowBottomTwo.Color 5
+SiliconeWindowBottomTwo.Color 2
 SiliconeWindowBottomTwo.Visibility 1
 SiliconeWindowBottomTwo.Mother SingleCsI
 
