@@ -61,7 +61,7 @@ AlHousingFlatArmOri1.Rotation 52 -30 -30
 #AlHousingFlatArm2.Mother WorldVolume
 
 Shape BOX AddSideBox
-#AddSideBox.Parameters 0.176 0.587 2.98
+AddSideBox.Parameters 0.176 0.587 2.98
 Orientation AddSideBoxOri
 AddSideBoxOri.Position 4 -4 -2
 AddSideBoxOri.Rotation 54.74 0 0
