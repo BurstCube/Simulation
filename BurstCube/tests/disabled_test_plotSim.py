@@ -5,7 +5,7 @@ from numpy.testing import assert_allclose
 import unittest
 import os
 import sys
-from matplotlib.testing.decorators import image_comparison
+#from matplotlib.testing.decorators import image_comparison
 import matplotlib.pyplot as plt
 
 
