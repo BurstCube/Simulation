@@ -73,9 +73,29 @@ def createSourceString(config, energy, ze, az):
 
 class configurator():
 
-    def __init__(self, path):
+    def __init__(self, *args):
 
-        self.config = self.loadConfig(path)
+        from pkg_resources import resource_filename
+
+        '''Create a configurator object that's used to read and write
+        configurations.  You can initialize it with a config file that
+        you already have by passing
+
+        config = configurator("/full/path/to/config.yaml")
+
+        or initialize it without any arguments to get a default
+        config:
+
+        config = configurator()
+
+        '''
+
+        if len(args) > 0:
+            self.config = self.loadConfig(args[0])
+        else:
+            print('Loading default config.')
+            config_file = resource_filename('BurstCube', 'data/config.yaml')
+            self.config = self.loadConfig(config_file)
 
     def loadConfig(self, path):
         """
