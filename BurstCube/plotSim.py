@@ -376,21 +376,22 @@ def plotAngleComparison(sims, names, axis='ze', compareTo='',
     else:
         otherAxis = axes[axes.index(axis) - 1]
     
-    energyMask = (comp_aeff['keV'] > energyRange[0]) & (comp_aeff['keV'] < energyRange[1])
-    angleMask = (comp_aeff[otherAxis] > angleRange[0]) & (comp_aeff[otherAxis] < angleRange[1])
+    energyMask = (comp_aeff['keV'] > energyRange[0]) & (comp_aeff['keV']
+                                                        < energyRange[1])
+    angleMask = (comp_aeff[otherAxis] > angleRange[0]) & (comp_aeff[otherAxis]
+                                                          < angleRange[1])
     mask = energyMask & angleMask
-        
         
     plt.figure(figsize=(8, 6))
     plt.subplots_adjust(hspace=0.0)
-    gs = gridspec.GridSpec(2, 1,
-                               height_ratios=[4, 1])
+    gs = gridspec.GridSpec(2, 1, height_ratios=[4, 1])
         
     ax1 = plt.subplot(gs[0])
     ax2 = plt.subplot(gs[1])
-
-    ax1.set_title(r'Effective Area vs. Angle (E = {:,.0f} - {:,.0f} keV)'
-                      .format(energyRange[0],energyRange[1]))
+    
+    ax1.set_title(r'Effective Area vs. Angle (E = {:,.0f} - {:,.0f} keV, {} = {} - {} degrees)'
+                  .format(energyRange[0], energyRange[1], otherAxis,
+                          angleRange[0], angleRange[1]))
 
     label = '{}Angle (deg)'.format(axis)
     ax1.set_xlabel(label, fontsize=16)
@@ -407,13 +408,12 @@ def plotAngleComparison(sims, names, axis='ze', compareTo='',
        
         ax1.scatter(theta, aeff, color=color)
         ax1.plot(theta, aeff, color=color, alpha=0.5, linestyle='--',
-                     lw=2, label=name)
+                 lw=2, label=name)
         ax1.legend(loc='lower center', scatterpoints=1, prop={'size': 16},
                        frameon=False)
         ax1.grid(True)
     
-        diff = 100.*(aeff -
-                         comp_aeff['aeff'][mask])/comp_aeff['aeff'][mask]
+        diff = 100.*(aeff - comp_aeff['aeff'][mask])/comp_aeff['aeff'][mask]
     
         ax2.scatter(theta, diff, color=color)
         ax2.set_xlim(ax1.get_xlim())
