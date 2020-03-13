@@ -184,4 +184,3 @@ QuartzEpoxyRingTwo.Mother SingleCsI
 #G10Plane.Visibility 1
 #G10Plane.Mother ReadOutDetectorVolume
 
-

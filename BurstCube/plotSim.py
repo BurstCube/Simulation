@@ -320,8 +320,9 @@ def plotAeffComparison(sims, names, useEres=False, compareTo='GBM',
         plt.show()
 
         
-def plotThetaComparison(sims, names, axis='ze', compareTo='',
-                        useEres=False, energy=100):
+def plotAngleComparison(sims, names, axis='ze', compareTo='',
+                        useEres=False, energyRange=(99, 101),
+                        angleRange=(0, 360)):
 
     """Makes Theta comparison plots of two or more simulations.
 
@@ -334,20 +335,32 @@ def plotThetaComparison(sims, names, axis='ze', compareTo='',
        List of strings used to label the plots.  Should be
        the same length as the sims list.
 
+    axis : string ('ze' or 'az')
+       Axis to plot (either 'ze' for zenith or 'az' for azimuth.
+
     compareTo : string
        The curve to make the comparison to in the percent difference.
        Default is the first in the list.  You can pick any of the
        other curves in the `names` list.
 
-    energy : float
-       The energy bin (in keV) to plot.
+    usEres : bool
+       Use the energy resolution in the effective area calculation.
+
+    energyRang : list
+       The energy range (in keV) to plot as (emin, emax).
+
+    angleRange : list
+       The angular range (in keV) to plot as (degmin,
+       degmax).  This will only plot curves that fall into this range
+       for the axis that you are not plotting against (i.e. it'll be
+       'az' if you selected 'ze' for axis above.
 
     Returns
     ----------
        Nothing
 
     """
-
+    
     colors = plt.cm.rainbow(np.linspace(0, 1, len(sims)))
 
     if compareTo == '':
@@ -356,43 +369,54 @@ def plotThetaComparison(sims, names, axis='ze', compareTo='',
         i = names.index(compareTo)
     comp_aeff = sims[i].calculateAeff(useEres=useEres)
 
-    for energy in set(comp_aeff['keV']):
-        mask = comp_aeff['keV'] == energy
+    axes = ('ze', 'az')
+    if axis not in axes:
+        print('Not a valid axis.')
+        return
+    else:
+        otherAxis = axes[axes.index(axis) - 1]
+    
+    energyMask = (comp_aeff['keV'] > energyRange[0]) & (comp_aeff['keV'] < energyRange[1])
+    angleMask = (comp_aeff[otherAxis] > angleRange[0]) & (comp_aeff[otherAxis] < angleRange[1])
+    mask = energyMask & angleMask
         
-        plt.figure(figsize=(8, 6))
-        plt.subplots_adjust(hspace=0.0)
-        gs = gridspec.GridSpec(2, 1,
+        
+    plt.figure(figsize=(8, 6))
+    plt.subplots_adjust(hspace=0.0)
+    gs = gridspec.GridSpec(2, 1,
                                height_ratios=[4, 1])
         
-        ax1 = plt.subplot(gs[0])
-        ax2 = plt.subplot(gs[1])
+    ax1 = plt.subplot(gs[0])
+    ax2 = plt.subplot(gs[1])
 
-        ax1.set_title(r'Effective Area vs. Angle (E = {:,.0f} keV)'
-                      .format(energy))
+    ax1.set_title(r'Effective Area vs. Angle (E = {:,.0f} - {:,.0f} keV)'
+                      .format(energyRange[0],energyRange[1]))
 
-        ax1.set_xlabel('Incident Angle (deg)', fontsize=16)
-        ax1.set_ylabel('Effective Area (cm$^2$)', fontsize=16)
-        ax1.set_xticklabels(ax1.get_xticklabels(), visible=False)
+    label = '{}Angle (deg)'.format(axis)
+    ax1.set_xlabel(label, fontsize=16)
+    ax1.set_ylabel('Effective Area (cm$^2$)', fontsize=16)
+    ax1.set_xticklabels(ax1.get_xticklabels(), visible=False)
 
-        ax2.set_xlabel('Incident Angle (deg)', fontsize=16)
-        ax2.set_ylabel('% Diff', fontsize=16)
+    ax2.set_xlabel(label, fontsize=16)
+    ax2.set_ylabel('% Diff', fontsize=16)
 
-        for sim, name, color in zip(sims, names, colors):
-            aeffs = sim.calculateAeff(useEres=useEres)
-            aeff = aeffs['aeff'][mask]
-            theta = aeffs['ze'][mask]
+    for sim, name, color in zip(sims, names, colors):
+        aeffs = sim.calculateAeff(useEres=useEres)
+        aeff = aeffs['aeff'][mask]
+        theta = aeffs[axis][mask]
        
-            ax1.scatter(theta, aeff, color=color)
-            ax1.plot(theta, aeff, color=color, alpha=0.5, linestyle='--',
+        ax1.scatter(theta, aeff, color=color)
+        ax1.plot(theta, aeff, color=color, alpha=0.5, linestyle='--',
                      lw=2, label=name)
-            ax1.legend(loc='lower center', scatterpoints=1, prop={'size': 16},
+        ax1.legend(loc='lower center', scatterpoints=1, prop={'size': 16},
                        frameon=False)
-            ax1.grid(True)
+        ax1.grid(True)
     
-            diff = 100.*(aeff -
+        diff = 100.*(aeff -
                          comp_aeff['aeff'][mask])/comp_aeff['aeff'][mask]
     
-            ax2.scatter(theta, diff, color=color)
-            ax2.set_xlim(ax1.get_xlim())
-            plt.setp(ax2.get_yticklabels()[-1], visible=False)
-        plt.show()
+        ax2.scatter(theta, diff, color=color)
+        ax2.set_xlim(ax1.get_xlim())
+        plt.setp(ax2.get_yticklabels()[-1], visible=False)
+    plt.show()
+

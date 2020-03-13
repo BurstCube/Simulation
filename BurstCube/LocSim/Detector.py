@@ -164,7 +164,36 @@ class Detector(object):
         if np.isnan(phi): phi=0.
         return theta,phi
 
-    def exposure(self, ra, dec, FoV=False, alt=-10., index=0.77):
+    def exposure(self, ra, dec, FoV=False, alt=-10., index=0.77, horizon=90.):
+
+
+        '''This function takes an ra and a dec and reports the exposure at that point.  
+        If you declare FoV to be true, it'll assume the exposure is uniform across 
+        the field of view.  Otherwise, it will return an effective areas scaled by 
+        a cosine dependance up to the horizon.
+
+        Parameters
+        ----------
+        
+        ra : the right ascension of the test point
+        
+        dec : the declination of the test point
+        
+        FoV: If True, assumes a flat exposure.  If false, assumes a cosine dependance.
+        
+        alt: The location of the Earth's limb.  No exposure below this point (degrees).
+        
+        index: the scaling of the cosine dependance.
+        
+        horizon: A cut on the field of view of a detector.  No exposure below this point (degrees).
+
+        Returns
+        ----------
+
+        float : the exposure at the test point
+
+        '''
+
 
         locdb = "Test,f|V,{},{},21.26,2000".format(deg2HMS(ra),deg2DMS(dec))
         test_point = eph.readdb(locdb)
@@ -176,7 +205,7 @@ class Detector(object):
                 return 1.0
             else:
                 sep = eph.separation((self.azimuth,self.altitude),(test_point.az,test_point.alt))
-                if sep > np.pi/2.:
+                if sep > np.radians(horizon):
                     return 0.0
                 else:
                     return np.cos(sep)**index
