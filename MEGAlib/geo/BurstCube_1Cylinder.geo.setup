@@ -28,9 +28,13 @@ WorldVolume.Mother 0
 //This is the BurstCube Instrument and Detector
 Include $BURSTCUBE/Simulation/MEGAlib/geo/CalorimeterCSIProperties.det
 Include $BURSTCUBE/Simulation/MEGAlib/geo/Cylinder.geo
+Include $BURSTCUBE/Simulation/MEGAlib/geo/CylinderHousing.geo
 
-DetectorVolume.Mother WorldVolume
+SingleCsI.Position 0 0 0
+SingleCsI.Mother WorldVolume
 
+AlHousing.Position 0 0 0
+AlHousing.Mother WorldVolume
 
 # Base Trigger
 Trigger MainTrigger
