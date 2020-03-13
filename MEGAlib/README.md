@@ -1,8 +1,4 @@
 # MEGAlib simulation work
-analysis - high level analysis results
-bin - scripts to run simulations
 geo - geometery and detector files
-sim - simulations output
-source - source files
 
-testing branch
+NOTE: THIS DIRECTORY WILL GO AWAY.  SHOULD USE PRIVATE REPO FOR GEOMETRIES IN THE FUTURE.
