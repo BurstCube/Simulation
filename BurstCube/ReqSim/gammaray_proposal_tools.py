@@ -28,6 +28,11 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
     Spacecraft : BurstCube Spacecraft Object
 
     """
+    missions = ('Bia', 'GBM', 'Fermi', 'HAM', 'Nimble', 'BATSE', 'BurstCube')
+
+    if mission not in missions:
+        print('No such mission', mission)
+        return
 
     if mission == 'Bia':
         pointings = {'01': ('30:0:0', '55:0:0'),
