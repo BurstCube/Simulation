@@ -101,41 +101,47 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
     return sc, Aeff, index
 
 
-def plot_exposures(pointings,Aeff_fact,index=1,lat=0.,lon=np.radians(260.),Earth=True,antiEarth=False,NSIDE=32,doplot=True):
-    npointings=len(pointings)
-    sc = Spacecraft(pointings,lat=lat,lon=lon)
+def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
+                   Earth=True, antiEarth=False, NSIDE=32, doplot=True):
+
+    npointings = len(pointings)
+    sc = Spacecraft(pointings, lat=lat, lon=lon)
     exposure_positions_hp = np.arange(hp.nside2npix(NSIDE))
-    exposure_positions_pix = hp.pix2ang(NSIDE, exposure_positions_hp, lonlat=True)
+    exposure_positions_pix = hp.pix2ang(NSIDE, exposure_positions_hp,
+                                        lonlat=True)
     exposure_positions = np.vstack(exposure_positions_pix)
-    exposures = np.array([[ detector.exposure(position[0],position[1], alt=-90.,index=index) for position in exposure_positions.T] 
+    exposures = np.array([[detector.exposure(position[0], position[1],
+                                             alt=-90., index=index)
+                           for position in exposure_positions.T]
                           for detector in sc.detectors])
 
-    exps=exposures.sum(axis=0)*Aeff_fact
-    fs=exps#-min(gbm_exps))/max(gbm_exps)
+    exps = exposures.sum(axis=0)*Aeff_fact
+    fs = exps  # -min(gbm_exps))/max(gbm_exps)
 
-    if Earth: 
-        vec=hp.ang2vec(180,0,lonlat=True)
-        i=hp.query_disc(NSIDE,vec,67*np.pi/180.)
-        fs[i]=0
-        exposures[:,i]=0
+    if Earth:
+        vec = hp.ang2vec(180, 0, lonlat=True)
+        i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+        fs[i] = 0
+        exposures[:, i] = 0
     if antiEarth:
-        vec=hp.ang2vec(np.degrees(lon)-260.+180.,0,lonlat=True)
-        i=hp.query_disc(NSIDE,vec,67*np.pi/180.)
-        fs[i]=0
-        exposures[:,i]=0
+        vec = hp.ang2vec(np.degrees(lon)-260.+180., 0, lonlat=True)
+        i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+        fs[i] = 0
+        exposures[:, i] = 0
 
     if doplot:
-        plot.figure(figsize=(20,npointings))
-        s=np.argsort(pointings.keys())
+        plot.figure(figsize=(20, npointings))
+        s = np.argsort(pointings.keys())
         for j in range(npointings):
-            i=s[j]
-            hp.mollview(exposures[i]/max(exposures[i])*Aeff_fact,title='Detector ',\
-                        sub = [np.round(npointings/3.+0.5),3,int(str(j+1))])
-            #+pointings.keys()[i],\
+            i = s[j]
+            hp.mollview(exposures[i]/max(exposures[i])*Aeff_fact,
+                        title='Detector ',
+                        sub=[np.round(npointings/3.+0.5), 3, int(str(j+1))])
+            # +pointings.keys()[i],\
 
-        hp.mollview(fs,title='Sum of All Detectors')
+        hp.mollview(fs, title='Sum of All Detectors')
 #    plot.savefig(biadir+'exposure_maps_'+str(ang)+'.png')
-    return sc,fs,exposure_positions,pointings,exposures
+    return sc, fs, exposure_positions, pointings, exposures
 
 def num_detectors(sc,exposure_positions,pointings,antiEarth=False,NSIDE=32,Earth=True,fov=60.):
 
