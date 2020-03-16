@@ -1,16 +1,12 @@
 import numpy as np
 import matplotlib.pylab as plot
-from astropy.io import ascii,fits
 from scipy import interpolate
 from BurstCube.LocSim.Detector import *
 from BurstCube.LocSim.Spacecraft import *
-from astropy.coordinates import SkyCoord
-from astropy import units as u
-from scipy.optimize import curve_fit
-from astropy.table import Table
 import healpy as hp
 from pylab import cm
 import matplotlib.colors as mpl_col
+
 
 def load_mission(mission,lat=0.,lon=np.radians(260.)):
 
