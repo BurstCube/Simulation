@@ -18,14 +18,14 @@ def run(dir='/Users/jracusin/BurstCube/gitrep/Users/jracusin/',nsims=10000,minfl
 
 	burstcube, BCpointings, aeff_bc = setup_BC(dir=dir)
 	fermi, GBMpointings, aeff_gbm=setup_GBM(dir=dir)
-
-	## Aeff at 100 keV
+ 
+ 	## Aeff at 100 keV
 	# bcaeff=loginterpol(aeff_bc['keV'],aeff_bc['aeff'],150.)
 	# gbmaeff=loginterpol(aeff_gbm['energy'],aeff_gbm['aeff'],150.)
 	# print(bcaeff,gbmaeff)
 
 	#Aeff on same energy points
-	eng=np.logspace(np.log10(50),np.log10(300),100)
+        eng=np.logspace(np.log10(50),np.log10(300),100)
 	bcaeff=loginterpol(aeff_bc['keV'],aeff_bc['aeff'],eng)
 	gbmaeff=loginterpol(aeff_gbm['energy'],aeff_gbm['aeff'],eng)
 

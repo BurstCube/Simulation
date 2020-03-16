@@ -2,79 +2,99 @@ import numpy as np
 import matplotlib.pylab as plot
 from scipy import interpolate
 from BurstCube.LocSim.Detector import *
-from BurstCube.LocSim.Spacecraft import *
+from BurstCube.LocSim.Spacecraft import Spacecraft
 import healpy as hp
 from pylab import cm
 import matplotlib.colors as mpl_col
 
 
-def load_mission(mission,lat=0.,lon=np.radians(260.)):
+def load_mission(mission, lat=0., lon=np.radians(260.)):
+
+    """Detector setup for various missions.
+
+    Parameters
+    ----------
+    mission : str
+            string with the name of a specific mission.
+
+    lat : float
+          the latitude of the mission in degrees.
+
+    lon : float
+          the longitude of the mission in degrees.
+
+    Returns
+    ---------
+    Spacecraft : BurstCube Spacecraft Object
+
+    """
 
     if mission == 'Bia':
-        pointings = {'01': ('30:0:0','55:0:0'),
-        '02': ('90:0:0','55:0:0'),
-        '03': ('150:0:0','55:0:0'),
-        '04': ('210:0:0','55:0:0'),
-        '05': ('270:0:0','55:0:0'),
-        '06': ('330:0:0','55:0:0'),
-        '07': ('0:0:0','0:0:0')}
-        index=0.6
-        Aeff=320. # cm2
+        pointings = {'01': ('30:0:0', '55:0:0'),
+                     '02': ('90:0:0', '55:0:0'),
+                     '03': ('150:0:0', '55:0:0'),
+                     '04': ('210:0:0', '55:0:0'),
+                     '05': ('270:0:0', '55:0:0'),
+                     '06': ('330:0:0', '55:0:0'),
+                     '07': ('0:0:0', '0:0:0')}
+        index = 0.6
+        Aeff = 320.  # cm2
 
     if((mission == 'GBM') or (mission == 'Fermi')):
-        pointings = {'01': ('45:54:0','20:36:0'),
-                     '02': ('45:6:0','45:18:0'),
-                     '03': ('58:24:0','90:12:0'),
-                     '04': ('314:54:0','45:12:0'),
-                     '05': ('303:12:0','90:18:0'),
-                     '06': ('3:24:0','89:48:0'),
-                     '07': ('224:54:0','20:24:0'),
-                     '08': ('224:36:0','46:12:0'),
-                     '09': ('236:36:0','90:0:0'),
-                     '10': ('135:12:0','45:36:0'),
-                     '11': ('123:42:0','90:24:0'),
-                     '12': ('183:42:0','90:18:0')}
-        Aeff=132.
-        index=0.78
-        lat=np.radians(50.)
-        lon=np.radians(260.)
-       
-    if ((mission == 'HAM') or (mission=='Nimble')):
-        ang=45.
-        pointings = {'01': ('60:00:00',str(ang)+':0:0'),
-        '02': ('120:00:00',str(ang)+':0:0'),
-        '03': ('180:00:00',str(ang)+':0:0'),
-        '04': ('240:00:00',str(ang)+':0:0'),
-        '05': ('300:00:00',str(ang)+':0:0'),
-        '06': ('00:00:00',str(ang)+':0:0'),
-        '07': ('00:00:00','00:00:00')}
-        Aeff=132 #cm2
-        index=0.78
+        pointings = {'01': ('45:54:0', '20:36:0'),
+                     '02': ('45:6:0', '45:18:0'),
+                     '03': ('58:24:0', '90:12:0'),
+                     '04': ('314:54:0', '45:12:0'),
+                     '05': ('303:12:0', '90:18:0'),
+                     '06': ('3:24:0', '89:48:0'),
+                     '07': ('224:54:0', '20:24:0'),
+                     '08': ('224:36:0', '46:12:0'),
+                     '09': ('236:36:0', '90:0:0'),
+                     '10': ('135:12:0', '45:36:0'),
+                     '11': ('123:42:0', '90:24:0'),
+                     '12': ('183:42:0', '90:18:0')}
+        Aeff = 132.
+        index = 0.78
+        lat = np.radians(50.)
+        lon = np.radians(260.)
 
-    if mission=='BATSE':
-        ang=45
-        pointings = {'01': ('0:0:0',str(ang)+':0:0'),
-        '02': ('90:0:0',str(ang)+':0:0'),
-        '03': ('180:0:0',str(ang)+':0:0'),
-        '04': ('270:0:0',str(ang)+':0:0'),
-        '05': ('0:0:0',str(ang+90)+':0:0'),
-        '06': ('90:0:0',str(ang+90)+':0:0'),
-        '07': ('180:0:0',str(ang+90)+':0:0'),
-        '08': ('270:0:0',str(ang+90)+':0:0')}
-        index=1.0
-        Aeff=1500.
+    if ((mission == 'HAM') or (mission == 'Nimble')):
+        ang = 45.
+        pointings = {'01': ('60:00:00', str(ang)+':0:0'),
+                     '02': ('120:00:00', str(ang)+':0:0'),
+                     '03': ('180:00:00', str(ang)+':0:0'),
+                     '04': ('240:00:00', str(ang)+':0:0'),
+                     '05': ('300:00:00', str(ang)+':0:0'),
+                     '06': ('00:00:00', str(ang)+':0:0'),
+                     '07': ('00:00:00', '00:00:00')}
+        Aeff = 132  # cm2
+        index = 0.78
 
-    if mission=='BurstCube':
-        pointings = {'01': ('0:0:0','45:0:0'),
-        '02': ('90:0:0','45:0:0'),
-        '03': ('180:0:0','45:0:0'),
-        '04': ('270:0:0','45:0:0')}
-        Aeff=61.
-        index=0.6
+    if mission == 'BATSE':
+        ang = 45
+        pointings = {'01': ('0:0:0', str(ang)+':0:0'),
+                     '02': ('90:0:0', str(ang)+':0:0'),
+                     '03': ('180:0:0', str(ang)+':0:0'),
+                     '04': ('270:0:0', str(ang)+':0:0'),
+                     '05': ('0:0:0', str(ang+90)+':0:0'),
+                     '06': ('90:0:0', str(ang+90)+':0:0'),
+                     '07': ('180:0:0', str(ang+90)+':0:0'),
+                     '08': ('270:0:0', str(ang+90)+':0:0')}
+        index = 1.0
+        Aeff = 1500.
 
-    sc = Spacecraft(pointings,lat=lat,lon=lon)
+    if mission == 'BurstCube':
+        pointings = {'01': ('0:0:0', '45:0:0'),
+                     '02': ('90:0:0', '45:0:0'),
+                     '03': ('180:0:0', '45:0:0'),
+                     '04': ('270:0:0', '45:0:0')}
+        Aeff = 61.
+        index = 0.6
 
-    return sc, pointings, Aeff, index
+    sc = Spacecraft(pointings, lat=lat, lon=lon)
+
+    return sc, Aeff, index
+
 
 def plot_exposures(pointings,Aeff_fact,index=1,lat=0.,lon=np.radians(260.),Earth=True,antiEarth=False,NSIDE=32,doplot=True):
     npointings=len(pointings)
