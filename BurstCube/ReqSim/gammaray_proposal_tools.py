@@ -148,9 +148,6 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
     exposure_positions : unknown
         Unknown
 
-    pointings : dictionary
-        The pointings of the detectors (obsolete)
-
     exposures : unknown
         Unknown
 
@@ -193,7 +190,7 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
 
         hp.mollview(fs, title='Sum of All Detectors')
 #    plot.savefig(biadir+'exposure_maps_'+str(ang)+'.png')
-    return sc, fs, exposure_positions, pointings, exposures
+    return sc, fs, exposure_positions, exposures
 
 
 def num_detectors(sc, exposure_positions, antiEarth=False, NSIDE=32,
