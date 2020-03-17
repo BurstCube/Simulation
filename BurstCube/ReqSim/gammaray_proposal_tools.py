@@ -229,38 +229,41 @@ def num_detectors(sc, exposure_positions, pointings, antiEarth=False, NSIDE=32,
 
     Returns
     ---------
-    return sc, fs, exposure_positions, pointings, exposures
+    fs_det : unknown
+        unknown
+
     """
 
-    
-    npointings=len(pointings)
-    ## evaluate detector overlap
-    exposures = np.array([[ detector.exposure(position[0],position[1], alt=-23.,horizon=fov,index=0) for position in exposure_positions.T] 
+    npointings = len(pointings)
+    #  evaluate detector overlap
+    exposures = np.array([[detector.exposure(position[0], position[1],
+                                             alt=-23., horizon=fov, index=0)
+                           for position in exposure_positions.T]
                           for detector in sc.detectors])
 
-    plot.figure(figsize=(20,npointings))
-    s=np.argsort(pointings.keys())
+    plot.figure(figsize=(20, npointings))
+    s = np.argsort(pointings.keys())
     for j in range(npointings):
-        i=s[j]
-        hp.mollview(exposures[i],title='Detector '+pointings.keys()[i],\
-                    sub = [np.round(npointings/3.+0.5),3,int(str(j+1))])
-    exps=exposures.sum(axis=0)
-    #bia_fs=(exps-min(exps))/max(exps)
-    fs_det=exps#-min(gbm_exps))/max(gbm_exps)
+        i = s[j]
+        hp.mollview(exposures[i], title='Detector '+pointings.keys()[i],
+                    sub=[np.round(npointings/3.+0.5), 3, int(str(j+1))])
+    exps = exposures.sum(axis=0)
+    #  bia_fs=(exps-min(exps))/max(exps)
+    fs_det = exps  # -min(gbm_exps))/max(gbm_exps)
 
-    cmap_skewed=colormap_skewed(exps)
+    cmap_skewed = colormap_skewed(exps)
 
     if Earth:
-        vec=hp.ang2vec(180,0,lonlat=True)
-        i=hp.query_disc(NSIDE,vec,67*np.pi/180.)
-        fs_det[i]=0
+        vec = hp.ang2vec(180, 0, lonlat=True)
+        i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+        fs_det[i] = 0
 
     if antiEarth:
-        vec=hp.ang2vec(0,0,lonlat=True)
-        i=hp.query_disc(NSIDE,vec,67*np.pi/180.)
-        fs_det[i]=0
+        vec = hp.ang2vec(0, 0, lonlat=True)
+        i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+        fs_det[i] = 0
 
-    hp.mollview(fs_det,title='Overlap of Detectors',cmap=cmap_skewed)
+    hp.mollview(fs_det, title='Overlap of Detectors', cmap=cmap_skewed)
 
     return fs_det
 
