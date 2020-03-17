@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pylab as plot
 from astropy.io import ascii, fits
 import grb_catalogs
-#from BurstCube.LocSim.Detector import *
-#from BurstCube.LocSim.Spacecraft import *
-#from gammaray_proposal_tools import *
+#  from BurstCube.LocSim.Detector import *
+#  from BurstCube.LocSim.Spacecraft import *
+#  from gammaray_proposal_tools import *
 from gammaray_proposal_tools import load_mission, loginterpol, random_sky
 from pkg_resources import resource_filename
 

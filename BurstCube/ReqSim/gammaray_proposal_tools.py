@@ -104,6 +104,45 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
 def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
                    Earth=True, antiEarth=False, NSIDE=32, doplot=True):
 
+    """Short descrtiption of this function.
+
+    
+
+    Parameters
+    ----------
+    pointings : dictionary
+        Dictionary with the pointings of the detectors.
+
+    Aeff_fact : float
+        Effective Area
+
+    index : float
+        Index (not sure what this is)
+
+    lat : float
+        Latitude of the observatory in degress
+
+    lon : float
+        Longitude of the observatory in radians
+
+    Earth : bool
+        Unknown
+
+    antiEarth : bool
+        Unknown
+
+    NSIDE : int
+        Resolution of the healpix map
+
+    doplot : bool
+        Make the plots.
+
+
+    Returns
+    ---------
+    return sc, fs, exposure_positions, pointings, exposures
+    """
+
     npointings = len(pointings)
     sc = Spacecraft(pointings, lat=lat, lon=lon)
     exposure_positions_hp = np.arange(hp.nside2npix(NSIDE))
@@ -209,8 +248,30 @@ def colormap_skewed(exps):
 
     return cmap_skewed
 
-def thetaphi2radec(theta,phi):
 
+def thetaphi2radec(theta, phi):
+
+    """Converts theta and phi to ra and dec.
+
+
+    Parameters
+    ----------
+    theta : float
+        theta in radians
+
+    phi : float
+        phi in radians
+
+    Returns
+    ----------
+    ra: float
+        Right ascencian in degrees
+
+    dec: float
+        Declination in degrees.
+    
+        """
+    
     dec=-np.degrees(theta-np.pi/2.)
     ra=np.degrees(np.pi*2-phi)
 
