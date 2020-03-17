@@ -16,3 +16,14 @@ def test_load_mission():
         assert (np.abs(Aeffs[i] - Aeff) < 1e-7)
         assert nDets[i] == len(sc.pointings)
         assert (np.abs(indices[i] - index) < 1e-7)
+
+def test_thetaphi2radec():
+
+    from BurstCube.ReqSim.gammaray_proposal_tools import thetaphi2radec
+
+    ra, dec = thetaphi2radec(1.5, 3.0)
+
+    assert (np.abs(ra - 188.11266146075303) < 1e-7)
+    assert (np.abs(dec - 4.056330730376516) < 1e-7)
+
+    
