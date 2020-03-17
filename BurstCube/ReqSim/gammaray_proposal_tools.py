@@ -106,8 +106,6 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
 
     """Short descrtiption of this function.
 
-    
-
     Parameters
     ----------
     pointings : dictionary
@@ -140,7 +138,22 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
 
     Returns
     ---------
-    return sc, fs, exposure_positions, pointings, exposures
+    
+    sc : BurstCube.Spacecraft object.
+        The observatory.
+
+    fs : unknown
+        Unknown
+
+    exposure_positions : unknown
+        Unknown
+
+    pointings : dictionary
+        The pointings of the detectors (obsolete)
+
+    exposures : unknown
+        Unknown
+
     """
 
     npointings = len(pointings)
@@ -182,8 +195,44 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
 #    plot.savefig(biadir+'exposure_maps_'+str(ang)+'.png')
     return sc, fs, exposure_positions, pointings, exposures
 
-def num_detectors(sc,exposure_positions,pointings,antiEarth=False,NSIDE=32,Earth=True,fov=60.):
 
+def num_detectors(sc, exposure_positions, pointings, antiEarth=False, NSIDE=32,
+                  Earth=True, fov=60.):
+
+    """Short descrtiption of this function.
+
+    
+
+    Parameters
+    ----------
+    sc : BurstCube.Spacecraft Object
+        The observatory that this is being calculated for
+
+    exposure_positions : unknown
+        Unknown
+
+    pointings : dictionary
+        The detector pointings of the observatory.  Note that this is deprecated.
+
+    antiEarth : bool
+        Unknown (default = False)
+
+    NSIDE : int
+        Resolution of the healpix map (default = 32)
+
+    Earth : bool
+        Unknown (default = True)
+
+    fov : float
+        Field of View in degrees (default = 60.)
+
+
+    Returns
+    ---------
+    return sc, fs, exposure_positions, pointings, exposures
+    """
+
+    
     npointings=len(pointings)
     ## evaluate detector overlap
     exposures = np.array([[ detector.exposure(position[0],position[1], alt=-23.,horizon=fov,index=0) for position in exposure_positions.T] 
@@ -272,11 +321,12 @@ def thetaphi2radec(theta, phi):
     
         """
     
-    dec=-np.degrees(theta-np.pi/2.)
-    ra=np.degrees(np.pi*2-phi)
+    dec = -np.degrees(theta-np.pi/2.)
+    ra = np.degrees(np.pi*2-phi)
 
-    return ra,dec
-    
+    return ra, dec
+
+
 def random_sky(n=1):
 
     u=np.random.rand(n)
