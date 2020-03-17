@@ -196,7 +196,7 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
     return sc, fs, exposure_positions, pointings, exposures
 
 
-def num_detectors(sc, exposure_positions, pointings, antiEarth=False, NSIDE=32,
+def num_detectors(sc, exposure_positions, antiEarth=False, NSIDE=32,
                   Earth=True, fov=60.):
 
     """Short descrtiption of this function.
@@ -210,9 +210,6 @@ def num_detectors(sc, exposure_positions, pointings, antiEarth=False, NSIDE=32,
 
     exposure_positions : unknown
         Unknown
-
-    pointings : dictionary
-        The detector pointings of the observatory.  Note that this is deprecated.
 
     antiEarth : bool
         Unknown (default = False)
@@ -234,7 +231,7 @@ def num_detectors(sc, exposure_positions, pointings, antiEarth=False, NSIDE=32,
 
     """
 
-    npointings = len(pointings)
+    npointings = len(sc.pointings)
     #  evaluate detector overlap
     exposures = np.array([[detector.exposure(position[0], position[1],
                                              alt=-23., horizon=fov, index=0)
@@ -242,10 +239,10 @@ def num_detectors(sc, exposure_positions, pointings, antiEarth=False, NSIDE=32,
                           for detector in sc.detectors])
 
     plot.figure(figsize=(20, npointings))
-    s = np.argsort(pointings.keys())
+    s = np.argsort(sc.pointings.keys())
     for j in range(npointings):
         i = s[j]
-        hp.mollview(exposures[i], title='Detector '+pointings.keys()[i],
+        hp.mollview(exposures[i], title='Detector '+sc.pointings.keys()[i],
                     sub=[np.round(npointings/3.+0.5), 3, int(str(j+1))])
     exps = exposures.sum(axis=0)
     #  bia_fs=(exps-min(exps))/max(exps)
