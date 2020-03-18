@@ -441,11 +441,34 @@ def separation(ra1,dec1,ra2,dec2):
  
     return sep
 
-## bit of useful code for interpolating in log space
+
 def loginterpol(x,y,x1):
 
-    f=interpolate.interp1d(np.log10(x),np.log10(y),bounds_error=False,fill_value="extrapolate",kind='linear')
-    y1=10**f(np.log10(x1))
+    """Bit of useful code for interpolating in log space
+
+    Note: isn't there something that does this in scipy?
+
+    Parameters
+    ----------
+    x : python list
+        Original x points
+
+    y : python list
+        Original y points
+
+    x1 : python list
+        New points to be interpoated at in log space.
+
+    Returns
+    ----------
+    y1 : python list
+        New y points.
+
+    """
+    
+    f = interpolate.interp1d(np.log10(x), np.log10(y), bounds_error=False,
+                             fill_value="extrapolate", kind='linear')
+    y1 = 10**f(np.log10(x1))
 
     return y1
 

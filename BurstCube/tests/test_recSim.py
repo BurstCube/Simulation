@@ -146,3 +146,26 @@ def test_separation():
         sep1 = separation(ra1[i], dec1[i], ra2[i], dec2[i])
         sep2 = c1[i].separation(c2[i])
         assert(np.abs(sep1 - sep2.degree) < 1e-13)
+
+
+def test_loginterpol():
+
+    """Tests the loginterpol function"""
+
+    from BurstCube.ReqSim.gammaray_proposal_tools import loginterpol
+    
+    x = np.array([50., 75.1462, 112.939, 169.739, 255.105, 383.404, 576.227,
+                  866.025, 1301.57, 1956.16, 2939.97, 4418.55, 6640.74,
+                  9980.54, 15000.], dtype=np.float32)
+
+    y = np.array([56.0057, 60.1213, 61.7605, 61.7576, 54.1984, 42.0248,
+                  33.3321, 27.8825, 22.6889, 19.9883, 18.7626, 18.1448,
+                  18.8384, 20.1002, 20.9645], dtype=np.float32)
+    
+    eng = np.logspace(np.log10(50), np.log10(300), 100)
+
+    bcaeff = loginterpol(x, y, eng)
+
+    assert(np.abs(5885.900562958536 - bcaeff.sum()) < 1e-7)
+    
+    
