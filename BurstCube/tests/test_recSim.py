@@ -112,3 +112,37 @@ def test_colormap_skewed():
     cmap = colormap_skewed(exp)
 
     assert (cmap.name == 'skewed')
+
+def test_random_sky():
+
+    """Tests the random sky function.  Just makes sure that the ra, dec
+    pairs are in the right range. """
+    
+    from BurstCube.ReqSim.gammaray_proposal_tools import random_sky
+    
+    ra, dec = random_sky(20)
+
+    for pos in zip(ra, dec):
+        assert(pos[0] <= 360. and pos[0] >= 0.)
+        assert(pos[1] <= 90. and pos[1] >= -90.)
+
+        
+def test_separation():
+
+    """Tests the separation function against the astropy SkyCoords
+    function.  The tolerance on this seems a bit high.  In the future we
+    should replace this function with the astropy one. """
+
+    from BurstCube.ReqSim.gammaray_proposal_tools import random_sky, separation
+    from astropy.coordinates import SkyCoord
+
+    ra1, dec1 = random_sky(20)
+    ra2, dec2 = random_sky(20)
+
+    c1 = SkyCoord(ra1, dec1, unit="deg")
+    c2 = SkyCoord(ra2, dec2, unit="deg")
+
+    for i, ra in enumerate(ra1):
+        sep1 = separation(ra1[i], dec1[i], ra2[i], dec2[i])
+        sep2 = c1[i].separation(c2[i])
+        assert(np.abs(sep1 - sep2.degree) < 1e-13)

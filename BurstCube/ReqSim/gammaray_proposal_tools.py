@@ -370,29 +370,74 @@ def thetaphi2radec(theta, phi):
 
 def random_sky(n=1):
 
-    u=np.random.rand(n)
-    v=np.random.rand(n)
+    """Provids random sky positions in ra and dec. 
 
-    phi=2*np.pi*u
-    theta=np.arccos(2*v-1.)
 
-    ra,dec=thetaphi2radec(theta,phi)
+    Parameters
+    ----------
+    n : int
+        number of positions requested
 
-    if len(ra)==1:
-        ra=ra[0]
-        dec=dec[0]
+    Returns
+    ----------
+    ra: float
+        Right ascencian in degrees
 
-    return ra,dec
+    dec: float
+        Declination in degrees.
+
+    """
+    
+    u = np.random.rand(n)
+    v = np.random.rand(n)
+
+    phi = 2*np.pi*u
+    theta = np.arccos(2*v-1.)
+
+    ra, dec = thetaphi2radec(theta, phi)
+
+    if len(ra) == 1:
+        ra = ra[0]
+        dec = dec[0]
+
+    return ra, dec
+
 
 def separation(ra1,dec1,ra2,dec2):
 
-    rra1=np.radians(ra1)
-    rra2=np.radians(ra2)
-    rdec1=np.radians(dec1)
-    rdec2=np.radians(dec2)
+    """Calculates the angular separation between two ra, dec pairs.
 
-#    sep=np.degrees(np.sqrt(2-2.*np.cos(rra1-rra2)-2.*np.sin(rra1)*np.sin(rra2)*(np.cos(rdec1-rdec2)-1.)))
-    sep=np.degrees(np.arccos(np.sin(rdec1)*np.sin(rdec2)+np.cos(rdec1)*np.cos(rdec2)*np.cos(rra2-rra1)))
+    Note: should use astropy.coordinates instead.  See the test function.
+
+    Parameters
+    ----------
+    ra1 : float
+        right ascencian of the first coordinate in degrees
+
+    dec1 : float
+        declination of the first coordinate in degrees
+
+    ra2 : float
+        right ascencian of the second coordinate in degrees
+
+    dec2 : float
+        declination of the second coordinate in degrees
+
+    Returns
+    ----------
+    sep: float
+        angular separation in degrees
+
+    """
+    
+    rra1 = np.radians(ra1)
+    rra2 = np.radians(ra2)
+    rdec1 = np.radians(dec1)
+    rdec2 = np.radians(dec2)
+
+    # sep=np.degrees(np.sqrt(2-2.*np.cos(rra1-rra2)-2.*np.sin(rra1)*np.sin(rra2)*(np.cos(rdec1-rdec2)-1.)))
+    sep = np.degrees(np.arccos(np.sin(rdec1)*np.sin(rdec2) +
+                               np.cos(rdec1)*np.cos(rdec2)*np.cos(rra2-rra1)))
  
     return sep
 
