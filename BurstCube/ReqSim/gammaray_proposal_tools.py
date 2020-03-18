@@ -236,10 +236,11 @@ def num_detectors(sc, exposure_positions, antiEarth=False, NSIDE=32,
                           for detector in sc.detectors])
 
     plot.figure(figsize=(20, npointings))
-    s = np.argsort(sc.pointings.keys())
+    s = np.argsort(list(sc.pointings.keys()))
     for j in range(npointings):
         i = s[j]
-        hp.mollview(exposures[i], title='Detector '+sc.pointings.keys()[i],
+        hp.mollview(exposures[i],
+                    title='Detector '+list(sc.pointings.keys())[i],
                     sub=[np.round(npointings/3.+0.5), 3, int(str(j+1))])
     exps = exposures.sum(axis=0)
     #  bia_fs=(exps-min(exps))/max(exps)
@@ -261,14 +262,38 @@ def num_detectors(sc, exposure_positions, antiEarth=False, NSIDE=32,
 
     return fs_det
 
-def num_detectors_frac(fs_det):
-    ndet=int(np.max(fs_det))
-    npix=float(len(fs_det))
+def num_detectors_frac(fs_det, printResults=True):
 
-    print('Fraction of sky seen by # of detectors:')
-    for i in range(ndet):
-        frac=float(len(np.where(fs_det==i)[0])/npix)
-        print(str(i)+' '+str(frac))
+    """Short descrtiption of this function.
+
+    
+
+    Parameters
+    ----------
+    fs_det : Unknown
+        Unknown
+    
+    printResults : bool
+        Print out the result
+
+    Returns
+    ---------
+    fracs : list
+        Fraction of sky seen by number of detectors
+
+    """
+
+    ndet = int(np.max(fs_det))
+    npix = float(len(fs_det))
+
+    fracs = [float(len(np.where(fs_det == i)[0])/npix) for i in range(ndet)]
+
+    if printResults:
+        print('Fraction of sky seen by # of detectors:')
+        for i, frac in enumerate(fracs):
+            print(str(i)+' '+str(frac))
+
+    return fracs
 
 def colormap_skewed(exps):
     vmin_skewed = -1.0

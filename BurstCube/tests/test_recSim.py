@@ -37,6 +37,7 @@ def test_thetaphi2radec():
     assert (np.abs(ra - 188.11266146075303) < 1e-7)
     assert (np.abs(dec - 4.056330730376516) < 1e-7)
 
+    
 def test_plot_exposures():
 
     """Tests the plot_exposures function.  Uses the Bia as the baseline."""
@@ -61,3 +62,41 @@ def test_plot_exposures():
     exp_B = [2894.58578979, 2891.30008698, 2894.54420279, 2902.86230489,
              2907.83154417, 2902.90220647, 3071.9720967]
     np.testing.assert_allclose(exp.sum(axis=1), exp_B, rtol=1e-5, atol=0)
+
+def test_num_detectors():
+
+    """Tests the num_detectors function. Uses Bia as the baseline."""
+
+    from BurstCube.ReqSim.gammaray_proposal_tools import num_detectors,\
+        load_mission, plot_exposures
+    
+    sc, Aeff, index = load_mission('Bia')
+    sc, fs, ep, exp = plot_exposures(sc.pointings, Aeff, doplot=False)
+
+    fs_det = num_detectors(sc, ep)
+    
+    assert (np.sum(fs_det) == 21430.0)
+
+
+def test_num_detectors_frac():
+
+    """Tests the num_detectors function. Uses Bia as the baseline."""
+
+    fracs_test = [0.3151041666666667,
+                  0.12980143229166666,
+                  0.269287109375,
+                  0.09611002604166667,
+                  0.16731770833333334,
+                  0.0185546875,
+                  0.0015462239583333333]
+    
+    from BurstCube.ReqSim.gammaray_proposal_tools import num_detectors,\
+        load_mission, plot_exposures, num_detectors_frac
+
+    sc, Aeff, index = load_mission('Bia')
+    sc, fs, ep, exp = plot_exposures(sc.pointings, Aeff, doplot=False)
+    fs_det = num_detectors(sc, ep)
+
+    fracs = num_detectors_frac(fs_det)
+
+    np.testing.assert_allclose(fracs, fracs_test, rtol=1e-5, atol=0)
