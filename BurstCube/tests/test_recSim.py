@@ -168,4 +168,17 @@ def test_loginterpol():
 
     assert(np.abs(5885.900562958536 - bcaeff.sum()) < 1e-7)
     
+
     
+def test_loginterpol2d():
+
+    """Tests the loginterpol2d function.  Nothing yet."""
+
+    assert(True)
+
+    
+def test_match_catlogs_name():
+
+    """Tests the match_catalogs_name function.  Nothing yet."""
+
+    assert(True)

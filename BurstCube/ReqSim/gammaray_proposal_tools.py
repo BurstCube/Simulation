@@ -472,28 +472,81 @@ def loginterpol(x,y,x1):
 
     return y1
 
-def loginterpol2d(x,y,z,x1,y1):
 
-    wz=np.where(z==0)[0]
-    zz=z
-    zz[wz]=1.
-    f=interpolate.interp2d(x,y,np.log10(zz),bounds_error=False,fill_value="extrapolate",kind='linear')
-    z1=10**f(x1,y1)
+def loginterpol2d(x, y, z, x1, y1):
+
+    """Bit of useful code for interpolating in log space
+
+    Note: isn't there something that does this in scipy?
+
+    Parameters
+    ----------
+    x : python list
+        Original x points
+
+    y : python list
+        Original y points
+
+    z : python list
+        Original z points
+
+    x1 : python list
+        New x points
+
+    y1 : python list
+        New y points
+
+    Returns
+    ----------
+    z1 : python list
+        New z points.
+
+    """
+
+    
+    wz = np.where(z == 0)[0]
+    zz = z
+    zz[wz] = 1.
+    f = interpolate.interp2d(x, y, np.log10(zz), bounds_error=False,
+                             fill_value="extrapolate", kind='linear')
+    z1 = 10**f(x1, y1)
 
     return z1
 
-#function to match GRBs in the Trigger catalog to those in the grb catalog so that we can create an array of the grbs in both
-#We will use the trigger timescale found in the trigger catalog 
+
 def match_catalogs_name(name1,name2):
 
-    ind_dict = dict((q,e) for e,q in enumerate(name1))
+    """Function to match GRBs in the Trigger catalog to those in the grb
+    catalog so that we can create an array of the grbs in both.  We will
+    use the trigger timescale found in the trigger catalog
+    
+    Parameters
+    ----------
+    name1 : str
+        Unknown
+
+    name2 : string
+        Unknown
+
+    Returns
+    ----------
+
+    m1 : python list
+        Unknown
+    
+    m2 : python list
+        Unknown
+
+    """
+
+    ind_dict = dict((q, e) for e, q in enumerate(name1))
     inter = set(ind_dict).intersection(name2)
     m1 = [ind_dict[element] for element in inter]
     print(np.shape(m1))
     
-    ind_dict = dict((q,e) for e,q in enumerate(name2))
+    ind_dict = dict((q, e) for e, q in enumerate(name2))
     inter = set(ind_dict).intersection(name1)
     m2 = [ind_dict[element] for element in inter]
     print(np.shape(m2))
     
-    return m1,m2
+    return m1, m2
