@@ -100,3 +100,15 @@ def test_num_detectors_frac():
     fracs = num_detectors_frac(fs_det)
 
     np.testing.assert_allclose(fracs, fracs_test, rtol=1e-5, atol=0)
+
+def test_colormap_skewed():
+
+    from BurstCube.ReqSim.gammaray_proposal_tools import load_mission,\
+        plot_exposures, colormap_skewed
+
+    sc, Aeff, index = load_mission('Bia')
+    sc, fs, ep, exp = plot_exposures(sc.pointings, Aeff, doplot=False)
+
+    cmap = colormap_skewed(exp)
+
+    assert (cmap.name == 'skewed')

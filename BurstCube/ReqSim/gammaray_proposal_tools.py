@@ -266,8 +266,7 @@ def num_detectors_frac(fs_det, printResults=True):
 
     """Short descrtiption of this function.
 
-    
-
+   
     Parameters
     ----------
     fs_det : Unknown
@@ -295,25 +294,45 @@ def num_detectors_frac(fs_det, printResults=True):
 
     return fracs
 
+
 def colormap_skewed(exps):
+
+    """Short descrtiption of this function.
+
+   
+    Parameters
+    ----------
+    exps : Unknown
+        Unknown
+    
+    Returns
+    ---------
+    cmap_skewed : matplotlib colorma
+        Skewed colormap
+
+    """
+    
     vmin_skewed = -1.0
-    vmid_skewed =  3.0
+    vmid_skewed = 3.0
     vmax_skewed = np.max(exps)
     vstep = 1.0
     levels = np.arange(vmin_skewed, vmax_skewed+vstep, vstep)
-    cmap = cm.get_cmap('bwr', len(levels)-1)
+    #  cmap = cm.get_cmap('bwr', len(levels)-1)
     deltamax = max(vmax_skewed-vmid_skewed, vmid_skewed-vmin_skewed)
 
-    vfull = [ vmid_skewed-deltamax, vmid_skewed+deltamax]  # Full range either side of vmid
-    #levfull = np.arange( vfull[0], vfull[1], vstep ) # Levels over full value range
+    # Full range either side of vmid
+    vfull = [vmid_skewed-deltamax, vmid_skewed+deltamax]
+    # Levels over full value range
+    # levfull = np.arange( vfull[0], vfull[1], vstep )
 
-    ncols = len(levels) -1 # number of colours we actually want to use
+    ncols = len(levels) - 1  # number of colours we actually want to use
 
-    vlo_frac = (vmin_skewed-vfull[0]) / (2.0*deltamax) # 0 or greater
-    vhi_frac = (vmax_skewed-vfull[0]) / (2.0*deltamax) # 1 or less
-    cmap_base = cm.get_cmap('bwr') # maps the range 0-1 to colours
-    cols = cmap_base( np.linspace( vlo_frac, vhi_frac, ncols) )
-    cmap_skewed = mpl_col.LinearSegmentedColormap.from_list('skewed',cols, N=ncols)
+    vlo_frac = (vmin_skewed-vfull[0]) / (2.0*deltamax)  # 0 or greater
+    vhi_frac = (vmax_skewed-vfull[0]) / (2.0*deltamax)  # 1 or less
+    cmap_base = cm.get_cmap('bwr')  # maps the range 0-1 to colours
+    cols = cmap_base(np.linspace(vlo_frac, vhi_frac, ncols))
+    cmap_skewed = mpl_col.LinearSegmentedColormap.from_list('skewed',
+                                                            cols, N=ncols)
     cmap_skewed.set_bad('gray')
     cmap_skewed.set_under('w')
 
