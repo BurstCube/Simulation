@@ -192,4 +192,4 @@ def test_getSGRBs():
 
     sgbm = getSGRBs()
 
-    assert(sgbm == 395)
+    assert(len(sgbm) == 395)

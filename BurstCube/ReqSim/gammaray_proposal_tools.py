@@ -570,13 +570,27 @@ def load_GBM_catalogs(dir=''):
 
     """
     from astropy.io import fits
-   
+    from pkg_resources import resource_filename
+
     # read in GBM Trigger Catalog
-    trigfit = fits.open(dir+'gbmtrigcat.fits')
+    catname = 'gbmtrigcat.fits'
+    if dir == '':
+        fname = resource_filename('BurstCube',
+                                  'data/' + catname)
+    else:
+        fname = dir + catname
+    trigfit = fits.open(fname)
     trig = trigfit[1].data
 
     # read in GBM Burst Catalog
-    gbmfit = fits.open(dir+'gbmgrbcat.fits')
+    catname = 'gbmgrbcat.fits'
+    if dir == '':
+        fname = resource_filename('BurstCube',
+                                  'data/' + catname)
+    else:
+        fname = dir + catname
+    
+    gbmfit = fits.open(fname)
     gbm = gbmfit[1].data
     
     return trig, gbm
