@@ -109,6 +109,38 @@ class Mission(Spacecraft):
             self.cosindex = 0.6
 
         super().__init__(pointings, lat, lon)
+
+    def loadAeff(self):
+
+        """Load the full effictive areas.  Only have BurstCube and GBM now."""
+        
+        from pkg_resources import resource_filename
+        from astropy.io import ascii as as_ascii
+        
+        filenames = {'BurstCube': 'BC_eff_area_curves.ecsv',
+                     'GBM': 'gbm_effective_area.dat',
+                     'Fermi':  'gbm_effective_area.dat'}
+
+        ea_file = filenames[self.mission]
+
+        if self.ea_dir == '':
+            fname = resource_filename('BurstCube',
+                                      'data/' + ea_file)
+        else:
+            fname = self.ea_dir+ea_file
+        if self.mission == 'BurstCube':
+            bcaeffs = as_ascii.read(fname, format='ecsv')
+            w = np.where((bcaeffs['diameter'] == 90)
+                         & (bcaeffs['height'] == 19))
+            aeff = bcaeffs[w]
+        elif (self.mission == 'GBM') or (self.mission == 'Fermi'):
+            aeff = np.genfromtxt(fname, skip_header=2,
+                                 names=('energy', 'aeff'))
+        else:
+            raise AttributeError("No such Mission")
+        
+        self.Aeff_full = aeff
+
         
     def calcExposures(self):
 

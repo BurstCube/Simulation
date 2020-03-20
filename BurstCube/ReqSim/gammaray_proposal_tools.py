@@ -513,7 +513,7 @@ def loginterpol2d(x, y, z, x1, y1):
     return z1
 
 
-def match_catalogs_name(name1,name2):
+def match_catalogs_name(name1, name2):
 
     """Function to match GRBs in the Trigger catalog to those in the grb
     catalog so that we can create an array of the grbs in both.  We will

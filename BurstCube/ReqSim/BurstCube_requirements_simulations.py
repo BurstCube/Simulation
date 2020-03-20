@@ -8,13 +8,20 @@ import grb_catalogs
 from gammaray_proposal_tools import load_mission, loginterpol, random_sky
 from pkg_resources import resource_filename
 
+from Mission import Mission
+
 # run code
 
 
 def run(dir='', nsims=10000, minflux=0.5):
 
-    burstcube, aeff_bc = setup_BC(dir=dir)
-    fermi, aeff_gbm = setup_GBM(dir=dir)
+    burstcube = Mission('BurstCube')
+    fermi = Mission('Fermi')
+    burstcube.loadAeff()
+    fermi.loadAeff()
+    
+    #burstcube, aeff_bc = setup_BC(dir=dir)
+    #fermi, aeff_gbm = setup_GBM(dir=dir)
     
     # Aeff at 100 keV
     # bcaeff=loginterpol(aeff_bc['keV'],aeff_bc['aeff'],150.)
@@ -23,8 +30,10 @@ def run(dir='', nsims=10000, minflux=0.5):
 
     # Aeff on same energy points
     eng = np.logspace(np.log10(50), np.log10(300), 100)
-    bcaeff = loginterpol(aeff_bc['keV'], aeff_bc['aeff'], eng)
-    gbmaeff = loginterpol(aeff_gbm['energy'], aeff_gbm['aeff'], eng)
+    bcaeff = loginterpol(burstcube.Aeff_full['keV'],
+                         burstcube.Aeff_full['aeff'], eng)
+    gbmaeff = loginterpol(fermi.Aeff_full['energy'],
+                          fermi.Aeff_full['aeff'], eng)
 
     # print(bcaeff/gbmaeff)
     trig, gbm = load_GBM_catalogs(dir=dir)
@@ -202,57 +211,6 @@ def run(dir='', nsims=10000, minflux=0.5):
     plot.legend()
     plot.show()
     #  return realgbmflux,simgbmpfsample
-
-
-def setup_BC(dir=''):
-
-    """Load the BurstCube mission up and setup the effective area.
-
-    Note: we should just add this to the BCSim object.
-    
-    Parameters
-    ----------
-    dir : string
-        Location of the effective area curves (BC_eff_area_curves.ecsv).
-        Default is to get them from the package data directory.
-
-    Returns
-    ----------
-    burstcube : BCSim Observatory Object
-        The burstcube observatory.
-
-    aeff_bc : python dictionary
-        The burstcube effective area.
-
-    """
-
-    burstcube, Aeff, index = load_mission('BurstCube')
-
-    # read in BurstCube Aeff for various BC configurations
-    if dir == '':
-        fname = resource_filename('BurstCube',
-                                  'data/BC_eff_area_curves.ecsv')
-    else:
-        fname = dir+'BC_eff_area_curves.ecsv'
-    bcaeffs = ascii.read(fname, format='ecsv')
-    w = np.where((bcaeffs['diameter'] == 90) & (bcaeffs['height'] == 19))
-    aeff_bc = bcaeffs[w]
-    # eng_bc=bcaeffs['keV'][w]
-    return burstcube, aeff_bc  # , eng_bc
-
-
-def setup_GBM(dir=''):
-
-    fermi, Aeff, index = load_mission('GBM')
-    # read in the GBM Aeff
-    if dir == '':
-        fname = resource_filename('BurstCube',
-                                  'data/gbm_effective_area.dat')
-    else:
-        fname = dir+'gbm_effective_area.dat'
-    aeff_gbm = np.genfromtxt(fname, skip_header=2, names=('energy', 'aeff'))
-
-    return fermi, aeff_gbm
 
 def load_GBM_catalogs(dir=''):
 	#read in GBM Trigger Catalog
