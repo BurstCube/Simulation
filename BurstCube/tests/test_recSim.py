@@ -101,6 +101,7 @@ def test_num_detectors_frac():
 
     np.testing.assert_allclose(fracs, fracs_test, rtol=1e-5, atol=0)
 
+
 def test_colormap_skewed():
 
     from BurstCube.ReqSim.gammaray_proposal_tools import load_mission,\

@@ -12,9 +12,10 @@ class Mission(Spacecraft):
 
     Missions = ('Bia', 'GBM', 'Fermi', 'HAM',
                 'Nimble', 'BATSE', 'BurstCube')
-
     
-    def __init__(self, mission, lat=0., lon=np.radians(260.), ea_dir=''):
+    def __init__(self, mission,  lat=0., lon=np.radians(260.),
+                 antiEarth=False, Earth=True, NSIDE=32, fov=60.,
+                 ea_dir=''):
 
         """Detector setup for various missions.
 
@@ -35,6 +36,10 @@ class Mission(Spacecraft):
         """
         
         self.mission = mission
+        self.antiEarth = antiEarth
+        self.Earth = Earth
+        self.NSIDE = NSIDE
+        self.fov = fov
         self.ea_dir = ea_dir
 
         if self.mission not in self.Missions:
@@ -105,7 +110,7 @@ class Mission(Spacecraft):
 
         super().__init__(pointings, lat, lon)
         
-    def calcExposures(self, Earth=True, antiEarth=False, NSIDE=32):
+    def calcExposures(self):
 
         """Short descrtiption of this function.
 
@@ -124,8 +129,8 @@ class Mission(Spacecraft):
         ---------
         """
 
-        exposure_positions_hp = np.arange(hp.nside2npix(NSIDE))
-        exposure_positions_pix = hp.pix2ang(NSIDE, exposure_positions_hp,
+        exposure_positions_hp = np.arange(hp.nside2npix(self.NSIDE))
+        exposure_positions_pix = hp.pix2ang(self.NSIDE, exposure_positions_hp,
                                             lonlat=True)
         self.exposure_positions = np.vstack(exposure_positions_pix)
         self.exposures = np.array([[detector.exposure(position[0], position[1],
@@ -137,14 +142,14 @@ class Mission(Spacecraft):
         exps = self.exposures.sum(axis=0)*self.Aeff
         self.fs = exps  # -min(gbm_exps))/max(gbm_exps)
 
-        if Earth:
+        if self.Earth:
             vec = hp.ang2vec(180, 0, lonlat=True)
-            i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+            i = hp.query_disc(self.NSIDE, vec, 67*np.pi/180.)
             self.fs[i] = 0
             self.exposures[:, i] = 0
-        if antiEarth:
+        if self.antiEarth:
             vec = hp.ang2vec(np.degrees(self.lon)-260.+180., 0, lonlat=True)
-            i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+            i = hp.query_disc(self.NSIDE, vec, 67*np.pi/180.)
             self.fs[i] = 0
             self.exposures[:, i] = 0
   
@@ -168,4 +173,78 @@ class Mission(Spacecraft):
 
         hp.mollview(self.fs, title='Sum of All Detectors')
         #  plot.savefig(biadir+'exposure_maps_'+str(ang)+'.png')
-    
+
+    @property
+    def _exp_overlap(self):
+
+        """Property to get the exposure overlap on the sky.  Ony runs once."""
+        
+        try:
+            return self._exposures_ovlp
+        except AttributeError:
+            print('Calculating Overlap')
+            #  evaluate detector overlap
+            exposures = np.array([[detector.exposure(position[0],
+                                                     position[1],
+                                                     alt=-23.,
+                                                     horizon=self.fov,
+                                                     index=0)
+                                   for position in self.exposure_positions.T]
+                                  for detector in self.detectors])
+            self._exposures_ovlp = exposures
+            return self._exposures_ovlp
+            
+    @property
+    def fs_det(self):
+
+        """Property to calculate the exposures per detector in healpix."""
+
+        fs_det = self._exp_overlap.sum(axis=0)
+
+        if self.Earth:
+            vec = hp.ang2vec(180, 0, lonlat=True)
+            i = hp.query_disc(self.NSIDE, vec, 67*np.pi/180.)
+            fs_det[i] = 0
+
+        if self.antiEarth:
+            vec = hp.ang2vec(0, 0, lonlat=True)
+            i = hp.query_disc(self.NSIDE, vec, 67*np.pi/180.)
+            fs_det[i] = 0
+
+        return fs_det
+
+    @property
+    def fs_det_frac(self):
+
+        ndet = int(np.max(self.fs_det))
+        npix = float(len(self.fs_det))
+
+        fracs = [float(len(np.where(self.fs_det == i)[0])/npix)
+                 for i in range(ndet)]
+
+        return fracs
+
+    def print_fs_det_frac(self):
+
+        fracs = self.fs_det_frac
+        
+        print('Fraction of sky seen by # of detectors:')
+        for i, frac in enumerate(fracs):
+            print(str(i)+' '+str(frac))
+        
+    def plot_fs_det(self):
+        
+        from gammaray_proposal_tools import colormap_skewed
+        
+        npointings = len(self.pointings)
+        exposures = self._exp_overlap
+        s = np.argsort(list(self.pointings.keys()))
+        for j in range(npointings):
+            i = s[j]
+            hp.mollview(exposures[i],
+                        title='Detector '+list(self.pointings.keys())[i],
+                        sub=[np.round(npointings/3.+0.5), 3, int(str(j+1))])
+        cmap_skewed = colormap_skewed(self.fs_det)
+            
+        hp.mollview(self.fs_det, title='Overlap of Detectors',
+                    cmap=cmap_skewed)
