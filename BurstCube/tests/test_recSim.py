@@ -184,8 +184,12 @@ def test_match_catlogs_name():
 
     assert(True)
 
-def test_setup_BC():
+def test_getSGRBs():
 
-    """Test the setup_BC function.  Just checks the effective area."""
+    """Tests the getSGRBs function"""
 
-    assert(True)
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import getSGRBs
+
+    sgbm = getSGRBs()
+
+    assert(sgbm == 395)

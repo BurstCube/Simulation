@@ -549,3 +549,34 @@ def match_catalogs_name(name1, name2):
     print(np.shape(m2))
     
     return m1, m2
+
+
+def load_GBM_catalogs(dir=''):
+
+    """Function to load the GBM catalog.
+
+    Parameters
+    ---------
+    dir : string
+        Location of the grb catalog.  Default is to look in the data directory.
+
+    Returns
+    --------
+    trig : astropy.io.fits.fitsrec.FITS_rec
+        GBM Trigger catalog
+    
+    gbm : astropy.io.fits.fitsrec.FITS_rec
+        GBM Burst catalog
+
+    """
+    from astropy.io import fits
+   
+    # read in GBM Trigger Catalog
+    trigfit = fits.open(dir+'gbmtrigcat.fits')
+    trig = trigfit[1].data
+
+    # read in GBM Burst Catalog
+    gbmfit = fits.open(dir+'gbmgrbcat.fits')
+    gbm = gbmfit[1].data
+    
+    return trig, gbm

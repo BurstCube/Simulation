@@ -1,16 +1,33 @@
 import numpy as np
 import matplotlib.pylab as plot
-from astropy.io import ascii, fits
-import grb_catalogs
+import BurstCube.ReqSim.grb_catalogs as grb_catalogs
 #  from BurstCube.LocSim.Detector import *
 #  from BurstCube.LocSim.Spacecraft import *
 #  from gammaray_proposal_tools import *
-from gammaray_proposal_tools import load_mission, loginterpol, random_sky
-from pkg_resources import resource_filename
+from BurstCube.ReqSim.gammaray_proposal_tools import loginterpol,\
+    random_sky, load_GBM_catalogs
+from BurstCube.ReqSim.Mission import Mission
 
-from Mission import Mission
 
-# run code
+def getSGRBs(dir=''):
+
+    """Loads the GBM catalog and pulls out the short GRBs. Get shorty!
+
+    Parameters
+    ----------
+    Please press the tab key twice.
+
+    Returns
+    --------
+    sgbm : Unknown
+        Short GRBs from the GBM catalog.
+
+    """
+
+    trig, gbm = load_GBM_catalogs(dir=dir)
+    s = np.where(gbm['T90'] <= 2.0)[0]
+    sgbm = gbm[s]
+    return sgbm
 
 
 def run(dir='', nsims=10000, minflux=0.5):
@@ -19,9 +36,6 @@ def run(dir='', nsims=10000, minflux=0.5):
     fermi = Mission('Fermi')
     burstcube.loadAeff()
     fermi.loadAeff()
-    
-    #burstcube, aeff_bc = setup_BC(dir=dir)
-    #fermi, aeff_gbm = setup_GBM(dir=dir)
     
     # Aeff at 100 keV
     # bcaeff=loginterpol(aeff_bc['keV'],aeff_bc['aeff'],150.)
@@ -35,13 +49,8 @@ def run(dir='', nsims=10000, minflux=0.5):
     gbmaeff = loginterpol(fermi.Aeff_full['energy'],
                           fermi.Aeff_full['aeff'], eng)
 
-    # print(bcaeff/gbmaeff)
-    trig, gbm = load_GBM_catalogs(dir=dir)
-    s = np.where(gbm['T90'] <= 2.0)[0]
-    sgbm = gbm[s]
+    sgbm = getSGRBs()
     print(len(sgbm))
-    # realgbmflux=sgbm['FLUX_BATSE_1024']
-    # wreal=np.where(realgbmflux>0)[0]
 
     interval = 1.0  # s
     bgrate = 300.   # cts/s in 50-300 keV
@@ -212,16 +221,6 @@ def run(dir='', nsims=10000, minflux=0.5):
     plot.show()
     #  return realgbmflux,simgbmpfsample
 
-def load_GBM_catalogs(dir=''):
-	#read in GBM Trigger Catalog
-	trigfit=fits.open(dir+'gbmtrigcat.fits')
-	trig=trigfit[1].data
-
-	#read in GBM Burst Catalog
-	gbmfit=fits.open(dir+'gbmgrbcat.fits')
-	gbm=gbmfit[1].data
-
-	return trig,gbm
 
 # now that GBM and BurstCube's pointings are set up we will throw GRBs at it and determine the exposure for each GRB. 
 #generate GRBs and throw them at GBM
