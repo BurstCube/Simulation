@@ -30,18 +30,35 @@ def getSGRBs(dir=''):
     return sgbm
 
 
-def run(dir='', nsims=10000, minflux=0.5):
+def run(dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 
-    burstcube = Mission('BurstCube')
-    fermi = Mission('Fermi')
+    """Run the full simulation to get the number of GRBs BurstCube will detect.
+
+    Parameters
+    ----------
+    dir : string
+        Location of the effective area curves and catalogs.  Defaults to the package data directory.
+
+    nsims : int
+        Number of simulations to run (defualt 10000)
+
+    minflux : float
+        Unknown (dfault 0.5)
+
+    interval : float
+        The interval in seconds (default 1.0)
+
+    bgrate : float
+        Background rate in cts/s over 50 - 300 keV (default 300)
+
+        """
+
+    
+    burstcube = Mission('BurstCube', ea_dir=dir)
+    fermi = Mission('Fermi', ea_dir=dir)
     burstcube.loadAeff()
     fermi.loadAeff()
     
-    # Aeff at 100 keV
-    # bcaeff=loginterpol(aeff_bc['keV'],aeff_bc['aeff'],150.)
-    # gbmaeff=loginterpol(aeff_gbm['energy'],aeff_gbm['aeff'],150.)
-    # print(bcaeff,gbmaeff)
-
     # Aeff on same energy points
     eng = np.logspace(np.log10(50), np.log10(300), 100)
     bcaeff = loginterpol(burstcube.Aeff_full['keV'],
@@ -49,19 +66,20 @@ def run(dir='', nsims=10000, minflux=0.5):
     gbmaeff = loginterpol(fermi.Aeff_full['energy'],
                           fermi.Aeff_full['aeff'], eng)
 
-    sgbm = getSGRBs()
-    print(len(sgbm))
+    sgbm = getSGRBs(dir=dir)
+    print("Number of short GRBs detected by GBM: " + str(len(sgbm)))
 
-    interval = 1.0  # s
-    bgrate = 300.   # cts/s in 50-300 keV
-    gbmexposures, bcexposures, secondhighestgbm, secondhighestbc,\
-        randgbmexposures, randbcexposures =\
-        throw_grbs(fermi, burstcube, nsims=nsims)
-    # simgbmcr,simbccr,simgbmpfsample,simbcpfsample,realpf,pinterval=grb_spectra(sgbm,gbmaeff,bcaeff,eng,nsims,interval=interval)
+    ra, dec = random_sky(nsims)
+    randbcexposures, bcexposures, secondhighestbc =\
+        burstcube.grb_exposures(ra, dec)
+    randgbmexposures, gbmexposures, secondhighestgbm = \
+        fermi.grb_exposures(ra, dec)
+        
     gbmflux2counts, bcflux2counts, realpf = grb_spectra(sgbm, gbmaeff,
                                                         bcaeff, eng,
                                                         nsims,
                                                         interval=interval)
+    
     pf = logNlogS(bcaeff, gbmaeff, minflux=minflux, nsims=nsims,
                   interval=interval)
     r = np.array(np.round(np.random.rand(nsims)*(len(realpf)-1)).astype('int'))
@@ -221,35 +239,6 @@ def run(dir='', nsims=10000, minflux=0.5):
     plot.show()
     #  return realgbmflux,simgbmpfsample
 
-
-# now that GBM and BurstCube's pointings are set up we will throw GRBs at it and determine the exposure for each GRB. 
-#generate GRBs and throw them at GBM
-
-def throw_grbs(fermi,burstcube,nsims=10000):
-    
-    ra,dec=random_sky(nsims)
-    ra=np.array(ra)-180
-    dec=np.array(dec)
-   
-    #GBM and BurstCube exposures for each random GRB.
-    randgbmexposures = np.array([[detector.exposure(ra[i],dec[i], alt=-23.,index=0.78) for i in range(nsims)] for detector in fermi.detectors])
-    randbcexposures = np.array([[detector.exposure(ra[i],dec[i], alt=-23.,index=0.6) for i in range(nsims)] for detector in burstcube.detectors])
-    
-    #Order randgbmexposures into descending order
-    for column in randgbmexposures.T:
-        newrandgbm = -np.sort(-randgbmexposures.T) 
-    gbmexposures = np.transpose(newrandgbm)
-    
-    for col in randbcexposures.T:
-        newrandbc = -np.sort(-randbcexposures.T) 
-    bcexposures = np.transpose(newrandbc)
-
-    #Select the second highest exposure value. 
-    #We will use this to ensure the second highest exposure detector has a sig >4.5
-    secondhighestgbm = gbmexposures[1,:]
-    secondhighestbc = bcexposures[1,:]
-        
-    return gbmexposures, bcexposures, secondhighestgbm, secondhighestbc, randgbmexposures, randbcexposures
 
 def logNlogS(aeff_bc,aeff_gbm,minflux=0.5,nsims=10000,interval=1.0):
 

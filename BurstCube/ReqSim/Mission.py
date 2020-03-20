@@ -280,3 +280,48 @@ class Mission(Spacecraft):
             
         hp.mollview(self.fs_det, title='Overlap of Detectors',
                     cmap=cmap_skewed)
+
+    def grb_exposures(self, ra, dec):
+
+        """Compute the exposure for a group of GRBs with coordinates ra and dec.
+
+        Parameters
+        ---------
+        ra : numpy array
+            Right ascension in degrees
+
+        dec : numpy array
+            Declination in degrees
+
+        Returns
+        -------
+        randexposures: numpy array
+            Exposures in GRB order.
+
+        exposures : numpy array
+            Exposures for each GRB in decending order.
+
+        secondhighest : numpy array
+            The second highest exposure value
+
+        """
+
+        ra = np.array(ra) - 180
+        dec = np.array(dec)
+
+        randexposures = np.array([[detector.exposure(r, dec[i], alt=-23.,
+                                                     index=self.cosindex)
+                                   for i, r in enumerate(ra)]
+                                  for detector in self.detectors])
+
+        # Order randgbmexposures into descending order
+        for column in randexposures.T:
+            newrand = -np.sort(-randexposures.T) 
+        exposures = np.transpose(newrand)
+    
+        # Select the second highest exposure value. 
+        # We will use this to ensure the second highest
+        # exposure detector has a sig >4.5
+        secondhighest = exposures[1, :]
+
+        return randexposures, exposures, secondhighest
