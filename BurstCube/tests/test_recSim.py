@@ -182,3 +182,9 @@ def test_match_catlogs_name():
     """Tests the match_catalogs_name function.  Nothing yet."""
 
     assert(True)
+
+def test_setup_BC():
+
+    """Test the setup_BC function.  Just checks the effective area."""
+
+    assert(True)

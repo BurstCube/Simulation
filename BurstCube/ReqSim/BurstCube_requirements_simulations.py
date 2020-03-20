@@ -206,6 +206,26 @@ def run(dir='', nsims=10000, minflux=0.5):
 
 def setup_BC(dir=''):
 
+    """Load the BurstCube mission up and setup the effective area.
+
+    Note: we should just add this to the BCSim object.
+    
+    Parameters
+    ----------
+    dir : string
+        Location of the effective area curves (BC_eff_area_curves.ecsv).
+        Default is to get them from the package data directory.
+
+    Returns
+    ----------
+    burstcube : BCSim Observatory Object
+        The burstcube observatory.
+
+    aeff_bc : python dictionary
+        The burstcube effective area.
+
+    """
+
     burstcube, Aeff, index = load_mission('BurstCube')
 
     # read in BurstCube Aeff for various BC configurations

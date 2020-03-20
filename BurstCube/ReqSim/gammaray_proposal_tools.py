@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pylab as plot
 from scipy import interpolate
-from BurstCube.LocSim.Detector import *
 from BurstCube.LocSim.Spacecraft import Spacecraft
 import healpy as hp
 from pylab import cm
@@ -18,7 +17,7 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
             string with the name of a specific mission.
 
     lat : float
-          the latitude of the mission in degrees.
+          the latitude of the mission in degrees (default = 0).
 
     lon : float
           the longitude of the mission in degrees.
