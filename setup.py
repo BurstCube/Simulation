@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 from BurstCube.version import get_git_version
 
 setup(name='BurstCube',
