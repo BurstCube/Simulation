@@ -89,3 +89,19 @@ def test_grb_exposures():
     assert(np.abs(r_a.sum() - r_b_sum) < 1e-7)
     assert(np.abs(e_a.sum() - e_b_sum) < 1e-7)
     np.testing.assert_allclose(s_a, s_b, rtol=1e-7, atol=0)
+
+    
+def test_loadAeff():
+
+    aeff_ref = [56.0057, 60.1213, 61.7605, 61.7576, 54.1984,
+                42.0248, 33.3321, 27.8825, 22.6889, 19.9883,
+                18.7626, 18.1448, 18.8384, 20.1002, 20.9645]
+    
+    from BurstCube.ReqSim.Mission import Mission
+
+    bc = Mission('BurstCube')
+
+    bc.loadAeff()
+
+    np.testing.assert_allclose(aeff_ref, bc.Aeff_full['aeff'],
+                               rtol=1e-7, atol=0)

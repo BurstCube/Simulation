@@ -53,7 +53,6 @@ def run(dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 
         """
 
-    
     burstcube = Mission('BurstCube', ea_dir=dir)
     fermi = Mission('Fermi', ea_dir=dir)
     burstcube.loadAeff()
@@ -243,76 +242,153 @@ def run(dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 def logNlogS(aeff_bc,aeff_gbm,minflux=0.5,nsims=10000,interval=1.0):
 
     #1 sec 50-300 keV peak flux ph/cm2/s
-	time = interval#1.0#0.064 # s
-	f=np.logspace(np.log10(minflux),2.2,50)
-	p=f**-0.9#1.5 # comes from fitting GBM sGRB logN-log peak flux
-	pnorm=p/np.sum(p)
-	r=np.random.choice(f,p=pnorm,size=nsims)
-
-	# bg_gbm=bgrate*time
-	# bg_bc=bgrate*np.max(aeff_bc)/np.max(aeff_gbm)*time  # scaling from GBM average background rate
-	src_bc=r*np.max(aeff_bc)*time
-	src_gbm=r*np.max(aeff_gbm)*time
-
-	simgbmpfsample = np.array(r)
-	simgbmcr = np.array(src_gbm/time)
-	simbcpfsample = np.array(r)
-	simbccr = np.array(src_bc/time)
-
-	return r#simgbmcr,simbccr,simgbmpfsample,simbcpfsample
-
-def grb_spectra(gbmbursts,gbmaeff,bcaeff,eng,nsims,interval=1.0):
-
-	#Integrating the best fit spectrum for each GRB in the energy range of 50-300 keV to get max. observed photon flux. 
-	#Doing the same but also folding in the effective area in order to get count rate.
-	#This will give us the photon flux in units of ph/cm^2/s. 
-	mo=gbmbursts['PFLX_BEST_FITTING_MODEL']
-	pf=np.zeros(len(mo))
-	gbmcr=np.zeros(len(mo))
-	bccr=np.zeros(len(mo))
-	pflux_interval=np.zeros(len(mo))
-	realpf=np.zeros(len(mo))
-
-	for i in range(len(mo)):
-#	    for j in range(len(gbmbursts)):
-#	        Aratio=(aeff_bc/aeff_gbm)
-	        # this should give us an array of the maximum observed photon flux for GBM
-		if mo[i]=='PFLX_PLAW':
-			gbmcr[i]=np.trapz(gbmbursts['PFLX_PLAW_AMPL'][i]*grb_catalogs.pl(eng,gbmbursts['PFLX_PLAW_INDEX'][i])*gbmaeff,eng)
-			pf[i]=np.trapz(gbmbursts['PFLX_PLAW_AMPL'][i]*grb_catalogs.pl(eng,gbmbursts['PFLX_PLAW_INDEX'][i]),eng)
-			bccr[i]=np.trapz(gbmbursts['PFLX_PLAW_AMPL'][i]*grb_catalogs.pl(eng,gbmbursts['PFLX_PLAW_INDEX'][i])*bcaeff,eng)
-			realpf[i]=gbmbursts['PFLX_PLAW_PHTFLUXB'][i]
-
-		if mo[i]=='PFLX_COMP':
-			gbmcr[i]=np.trapz(gbmbursts['PFLX_COMP_AMPL'][i]*grb_catalogs.comp(eng,gbmbursts['PFLX_COMP_INDEX'][i],gbmbursts['PFLX_COMP_EPEAK'][i])*gbmaeff,eng)
-			pf[i]=np.trapz(gbmbursts['PFLX_COMP_AMPL'][i]*grb_catalogs.comp(eng,gbmbursts['PFLX_COMP_INDEX'][i],gbmbursts['PFLX_COMP_EPEAK'][i]),eng)
-			bccr[i]=np.trapz(gbmbursts['PFLX_COMP_AMPL'][i]*grb_catalogs.comp(eng,gbmbursts['PFLX_COMP_INDEX'][i],gbmbursts['PFLX_COMP_EPEAK'][i])*bcaeff,eng)
-			realpf[i]=gbmbursts['PFLX_COMP_PHTFLUXB'][i]
-
-		if mo[i]=='PFLX_BAND':
-			gbmcr[i]=np.trapz(gbmbursts['PFLX_BAND_AMPL'][i]*grb_catalogs.band(eng,gbmbursts['PFLX_BAND_ALPHA'][i],gbmbursts['PFLX_BAND_EPEAK'][i],gbmbursts['PFLX_BAND_BETA'][i])*gbmaeff,eng)
-			pf[i]=np.trapz(gbmbursts['PFLX_BAND_AMPL'][i]*grb_catalogs.band(eng,gbmbursts['PFLX_BAND_ALPHA'][i],gbmbursts['PFLX_BAND_EPEAK'][i],gbmbursts['PFLX_BAND_BETA'][i]),eng)
-			bccr[i]=np.trapz(gbmbursts['PFLX_BAND_AMPL'][i]*grb_catalogs.band(eng,gbmbursts['PFLX_BAND_ALPHA'][i],gbmbursts['PFLX_BAND_EPEAK'][i],gbmbursts['PFLX_BAND_BETA'][i])*bcaeff,eng)
-			realpf[i]=gbmbursts['PFLX_BAND_PHTFLUXB'][i]
-
-		if mo[i]=='PFLX_SBPL':
-			gbmcr[i]=np.trapz(gbmbursts['PFLX_SBPL_AMPL'][i]*grb_catalogs.sbpl(eng,gbmbursts['PFLX_SBPL_INDX1'][i],gbmbursts['PFLX_SBPL_BRKEN'][i],gbmbursts['PFLX_SBPL_INDX2'][i])*gbmaeff,eng)
-			pf[i]=np.trapz(gbmbursts['PFLX_SBPL_AMPL'][i]*grb_catalogs.sbpl(eng,gbmbursts['PFLX_SBPL_INDX1'][i],gbmbursts['PFLX_SBPL_BRKEN'][i],gbmbursts['PFLX_SBPL_INDX2'][i]),eng)
-			bccr[i]=np.trapz(gbmbursts['PFLX_SBPL_AMPL'][i]*grb_catalogs.sbpl(eng,gbmbursts['PFLX_SBPL_INDX1'][i],gbmbursts['PFLX_SBPL_BRKEN'][i],gbmbursts['PFLX_SBPL_INDX2'][i])*bcaeff,eng)
-			realpf[i]=gbmbursts['PFLX_SBPL_PHTFLUXB'][i]
+    time = interval#1.0#0.064 # s
+    f=np.logspace(np.log10(minflux),2.2,50)
+    p=f**-0.9#1.5 # comes from fitting GBM sGRB logN-log peak flux
+    pnorm=p/np.sum(p)
+    r=np.random.choice(f,p=pnorm,size=nsims)
+    
+    # bg_gbm=bgrate*time
+    # bg_bc=bgrate*np.max(aeff_bc)/np.max(aeff_gbm)*time  # scaling from GBM average background rate
+    src_bc=r*np.max(aeff_bc)*time
+    src_gbm=r*np.max(aeff_gbm)*time
+    
+    simgbmpfsample = np.array(r)
+    simgbmcr = np.array(src_gbm/time)
+    simbcpfsample = np.array(r)
+    simbccr = np.array(src_bc/time)
+    
+    return r#simgbmcr,simbccr,simgbmpfsample,simbcpfsample
 
 
-		pflux_interval[i]=gbmbursts['PFLX_SPECTRUM_STOP'][i]-gbmbursts['PFLX_SPECTRUM_START'][i]
+def grb_spectra(gbmbursts, gbmaeff, bcaeff, eng, nsims, interval=1.0):
 
-	flux=gbmbursts['FLUX_BATSE_1024']
-	gbmflux2counts=gbmcr/pf
-	bcflux2counts=bccr/pf
-#	fluxwrong=flux/pf#*pflux_interval
-	r=np.array(np.round(np.random.rand(nsims)*(len(mo)-1)).astype('int'))
-	simgbmcr=gbmcr[r]*interval#*fluxwrong[r]#*pflux_interval[r]
-	simbccr=bccr[r]*interval#*fluxwrong[r]#*pflux_interval[r]
-	simpf=pf[r]*interval#*fluxwrong[r]#*pflux_interval[r]
-	pinterval=pflux_interval[r]
-	realflux=flux[r]
+    """Integrating the best fit spectrum for each GRB in the energy range
+       of 50-300 keV to get max. observed photon flux.  Doing the same
+       but also folding in the effective area in order to get count
+       rate.
 
-	return gbmflux2counts,bcflux2counts,realpf#simgbmcr,simbccr,simpf,simpf,realpf,pinterval
+       This will give us the photon flux in units of ph/cm^2/s.
+
+    Parameters
+    ----------
+    gbmbursts : astropy.io.fits.fitsrec.FITS_rec
+        Short bursts seen by GBM
+
+    gbmaeff : numpy array
+        GBM effective area
+
+    bcaeff : numpy array
+        BurstCbue effective area
+
+    eng : numpy array
+        Energy range in keV
+
+    nsims : int
+        Number of simulations to run
+    
+    interval : float
+        Interval in seconds to calculate over (default 1.0)
+    
+    Returns
+    -----------
+    gbmflux2counts : unknown
+        unknown
+
+    bcflux2counts : unknown
+        unknown
+
+    realpf : unknown
+        unknown
+    """
+
+    mo = gbmbursts['PFLX_BEST_FITTING_MODEL']
+    pf = np.zeros(len(mo))
+    gbmcr = np.zeros(len(mo))
+    bccr = np.zeros(len(mo))
+    pflux_interval = np.zeros(len(mo))
+    realpf = np.zeros(len(mo))
+
+    for i, grb in enumerate(gbmbursts):
+        # this should give us an array of the maximum
+        # observed photon flux for GBM
+        if mo[i] == 'PFLX_PLAW':
+            gbmcr[i] = np.trapz(grb['PFLX_PLAW_AMPL'] *
+                                grb_catalogs.pl(eng,
+                                                grb['PFLX_PLAW_INDEX']) *
+                                gbmaeff, eng)
+            pf[i] = np.trapz(grb['PFLX_PLAW_AMPL'] *
+                             grb_catalogs.pl(eng,
+                                             grb['PFLX_PLAW_INDEX']), eng)
+            bccr[i] = np.trapz(grb['PFLX_PLAW_AMPL'] *
+                               grb_catalogs.pl(eng,
+                                               grb['PFLX_PLAW_INDEX']) *
+                               bcaeff, eng)
+            realpf[i] = grb['PFLX_PLAW_PHTFLUXB']
+
+        if mo[i] == 'PFLX_COMP':
+            gbmcr[i] = np.trapz(grb['PFLX_COMP_AMPL'] *
+                                grb_catalogs.comp(eng, grb['PFLX_COMP_INDEX'],
+                                                  grb['PFLX_COMP_EPEAK']) *
+                                gbmaeff, eng)
+            pf[i] = np.trapz(grb['PFLX_COMP_AMPL'] *
+                             grb_catalogs.comp(eng, grb['PFLX_COMP_INDEX'],
+                                               grb['PFLX_COMP_EPEAK']), eng)
+            bccr[i] = np.trapz(grb['PFLX_COMP_AMPL'] *
+                               grb_catalogs.comp(eng, grb['PFLX_COMP_INDEX'],
+                                                 grb['PFLX_COMP_EPEAK']) *
+                               bcaeff, eng)
+            realpf[i] = grb['PFLX_COMP_PHTFLUXB']
+
+        if mo[i] == 'PFLX_BAND':
+            gbmcr[i] = np.trapz(grb['PFLX_BAND_AMPL'] *
+                                grb_catalogs.band(eng, grb['PFLX_BAND_ALPHA'],
+                                                  grb['PFLX_BAND_EPEAK'],
+                                                  grb['PFLX_BAND_BETA']) *
+                                gbmaeff, eng)
+            pf[i] = np.trapz(grb['PFLX_BAND_AMPL'] *
+                             grb_catalogs.band(eng, grb['PFLX_BAND_ALPHA'],
+                                               grb['PFLX_BAND_EPEAK'],
+                                               grb['PFLX_BAND_BETA']), eng)
+            bccr[i] = np.trapz(grb['PFLX_BAND_AMPL'] *
+                               grb_catalogs.band(eng, grb['PFLX_BAND_ALPHA'],
+                                                 grb['PFLX_BAND_EPEAK'],
+                                                 grb['PFLX_BAND_BETA']) *
+                               bcaeff, eng)
+            realpf[i] = grb['PFLX_BAND_PHTFLUXB']
+
+        if mo[i] == 'PFLX_SBPL':
+            gbmcr[i] = np.trapz(grb['PFLX_SBPL_AMPL'] *
+                                grb_catalogs.sbpl(eng, grb['PFLX_SBPL_INDX1'],
+                                                  grb['PFLX_SBPL_BRKEN'],
+                                                  grb['PFLX_SBPL_INDX2']) *
+                                gbmaeff, eng)
+            pf[i] = np.trapz(grb['PFLX_SBPL_AMPL'] *
+                             grb_catalogs.sbpl(eng,
+                                               grb['PFLX_SBPL_INDX1'],
+                                               grb['PFLX_SBPL_BRKEN'],
+                                               grb['PFLX_SBPL_INDX2']), eng)
+            bccr[i] = np.trapz(grb['PFLX_SBPL_AMPL'] *
+                               grb_catalogs.sbpl(eng,
+                                                 grb['PFLX_SBPL_INDX1'],
+                                                 grb['PFLX_SBPL_BRKEN'],
+                                                 grb['PFLX_SBPL_INDX2']) *
+                               bcaeff, eng)
+            realpf[i] = grb['PFLX_SBPL_PHTFLUXB']
+
+        pflux_interval[i] = grb['PFLX_SPECTRUM_STOP'] -\
+            grb['PFLX_SPECTRUM_START']
+
+    # flux = gbmbursts['FLUX_BATSE_1024']
+    gbmflux2counts = gbmcr/pf
+    bcflux2counts = bccr/pf
+    # fluxwrong=flux/pf#*pflux_interval
+    # r = np.array(np.round(np.random.rand(nsims)*(len(mo)-1)).astype('int'))
+    # simgbmcr = gbmcr[r]*interval #*fluxwrong[r]#*pflux_interval[r]
+    # simbccr = bccr[r]*interval #*fluxwrong[r]#*pflux_interval[r]
+    # simpf = pf[r]*interval #*fluxwrong[r]#*pflux_interval[r]
+    # pinterval = pflux_interval[r]
+    # realflux = flux[r]
+
+    return gbmflux2counts, bcflux2counts, realpf
+    # simgbmcr,simbccr,simpf,simpf,realpf,pinterval
