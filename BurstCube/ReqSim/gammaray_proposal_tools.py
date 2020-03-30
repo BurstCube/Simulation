@@ -551,7 +551,7 @@ def match_catalogs_name(name1, name2):
     return m1, m2
 
 
-def load_GBM_catalogs(dir=''):
+def load_GBM_catalogs(ea_dir=''):
 
     """Function to load the GBM catalog.
 
@@ -574,21 +574,21 @@ def load_GBM_catalogs(dir=''):
 
     # read in GBM Trigger Catalog
     catname = 'gbmtrigcat.fits'
-    if dir == '':
+    if ea_dir == '':
         fname = resource_filename('BurstCube',
                                   'data/' + catname)
     else:
-        fname = dir + catname
+        fname = ea_dir + catname
     trigfit = fits.open(fname)
     trig = trigfit[1].data
 
     # read in GBM Burst Catalog
     catname = 'gbmgrbcat.fits'
-    if dir == '':
+    if ea_dir == '':
         fname = resource_filename('BurstCube',
                                   'data/' + catname)
     else:
-        fname = dir + catname
+        fname = ea_dir + catname
     
     gbmfit = fits.open(fname)
     gbm = gbmfit[1].data

@@ -9,7 +9,7 @@ from BurstCube.ReqSim.gammaray_proposal_tools import loginterpol,\
 from BurstCube.ReqSim.Mission import Mission
 
 
-def getSGRBs(dir=''):
+def getSGRBs(ea_dir=''):
 
     """Loads the GBM catalog and pulls out the short GRBs. Get shorty!
 
@@ -24,20 +24,44 @@ def getSGRBs(dir=''):
 
     """
 
-    trig, gbm = load_GBM_catalogs(dir=dir)
+    trig, gbm = load_GBM_catalogs(ea_dir=ea_dir)
     s = np.where(gbm['T90'] <= 2.0)[0]
     sgbm = gbm[s]
     return sgbm
 
 
-def run(dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
+def init(ea_dir='', nsims=10000):
+
+    burstcube = Mission('BurstCube', ea_dir=ea_dir)
+    fermi = Mission('Fermi', ea_dir=ea_dir)
+    burstcube.loadAeff()
+    fermi.loadAeff()
+
+    # Aeff on same energy points
+    eng = np.logspace(np.log10(50), np.log10(300), 100)
+    bcaeff = loginterpol(burstcube.Aeff_full['keV'],
+                         burstcube.Aeff_full['aeff'], eng)
+    gbmaeff = loginterpol(fermi.Aeff_full['energy'],
+                          fermi.Aeff_full['aeff'], eng)
+
+    ra, dec = random_sky(nsims)
+    randbcexposures, bcexposures, secondhighestbc =\
+        burstcube.grb_exposures(ra, dec)
+    randgbmexposures, gbmexposures, secondhighestgbm = \
+        fermi.grb_exposures(ra, dec)
+    
+    return bcaeff, gbmaeff, secondhighestbc, secondhighestgbm, eng
+
+
+def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 
     """Run the full simulation to get the number of GRBs BurstCube will detect.
 
     Parameters
     ----------
     dir : string
-        Location of the effective area curves and catalogs.  Defaults to the package data directory.
+        Location of the effective area curves and catalogs.  Defaults to the 
+        package data directory.
 
     nsims : int
         Number of simulations to run (defualt 10000)
@@ -53,78 +77,32 @@ def run(dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 
         """
 
-    burstcube = Mission('BurstCube', ea_dir=dir)
-    fermi = Mission('Fermi', ea_dir=dir)
-    burstcube.loadAeff()
-    fermi.loadAeff()
-    
-    # Aeff on same energy points
-    eng = np.logspace(np.log10(50), np.log10(300), 100)
-    bcaeff = loginterpol(burstcube.Aeff_full['keV'],
-                         burstcube.Aeff_full['aeff'], eng)
-    gbmaeff = loginterpol(fermi.Aeff_full['energy'],
-                          fermi.Aeff_full['aeff'], eng)
+    bcaeff, gbmaeff, secondhighestbc, secondhighestgbm, eng = init(ea_dir,
+                                                                   nsims)
 
-    sgbm = getSGRBs(dir=dir)
+    sgbm = getSGRBs(ea_dir=ea_dir)
     print("Number of short GRBs detected by GBM: " + str(len(sgbm)))
-
-    ra, dec = random_sky(nsims)
-    randbcexposures, bcexposures, secondhighestbc =\
-        burstcube.grb_exposures(ra, dec)
-    randgbmexposures, gbmexposures, secondhighestgbm = \
-        fermi.grb_exposures(ra, dec)
-        
-    gbmflux2counts, bcflux2counts, realpf = grb_spectra(sgbm, gbmaeff,
-                                                        bcaeff, eng,
-                                                        nsims,
-                                                        interval=interval)
     
-    pf = logNlogS(bcaeff, gbmaeff, minflux=minflux, nsims=nsims,
-                  interval=interval)
+    gbmflux2counts, bcflux2counts, realpf = grb_spectra(sgbm, gbmaeff,
+                                                        bcaeff, eng)
+
+    pf = logNlogS(minflux=minflux, nsims=nsims)
+    
     r = np.array(np.round(np.random.rand(nsims)*(len(realpf)-1)).astype('int'))
 
     simgbmcr = pf*gbmflux2counts[r]
     simbccr = pf*bcflux2counts[r]
     simgbmpfsample = pf
     simbcpfsample = pf
-    pinterval = 1.
 
-    #  simgbmcr,simbccr,simgbmpfsample,simbcpfsample=logNlogS(bcaeff,gbmaeff,minflux=minflux,nsims=nsims,interval=interval)
     realgbmflux = realpf
     wreal = np.where(realgbmflux > 0)[0]
 
     pf = simgbmpfsample
 
-    #  Solve for the number of detected counts which will equal our source photons
-    sourcegbm = simgbmcr*secondhighestgbm*pinterval
-    sourcebc = simbccr*secondhighestbc*pinterval
-    #  randomize background rate around typical background of 300 cts/s (50-300 keV, GBM)
-    bckgrd = np.random.poisson(bgrate,nsims)
-    scaledgbmbckgrd = bckgrd*pinterval
-    scaledbcbckgrd = bckgrd*np.median(bcaeff/gbmaeff)*pinterval
-    #  creating an array of zeros that I can manipulate to create an array of detected GRBs
-    detectgbm = np.zeros(len(sourcegbm))
-    detectbc = np.zeros(len(sourcebc))
-
-    #  calculate the significance of the second highest exposure detector. If the significance is greater than 4.5 sigma than the burst is detectable.
-    for u in range(len(sourcegbm)):
-        if sourcegbm[u] > 0:
-            sig = sourcegbm[u] / (np.sqrt(sourcegbm[u] +
-                                          scaledgbmbckgrd[u]))
-            if sig > 4.5:
-                detectgbm[u] = 1.0
-            else:
-                detectgbm[u] = 0.0
-
-    for j in range(len(sourcebc)):
-        if sourcebc[j] > 0:
-            sig = sourcebc[j] / (np.sqrt(sourcebc[j] + scaledbcbckgrd[j]))
-            if sig > 4.5:
-                detectbc[j] = 1.0
-            else:
-                detectbc[j] = 0.0
-        else:
-            sig = 0
+    detectbc, detectgbm = calcSignificance(simbccr, simgbmcr, secondhighestbc,
+                                           secondhighestgbm, bcaeff, gbmaeff,
+                                           nsims, bgrate, pinterval=1.)
 
     #  Creating plot of peak flux versus counts for real and simulated GBM
     # w = np.where(pf > 0)[0]
@@ -239,29 +217,31 @@ def run(dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     #  return realgbmflux,simgbmpfsample
 
 
-def logNlogS(aeff_bc,aeff_gbm,minflux=0.5,nsims=10000,interval=1.0):
+def logNlogS(minflux=0.5, nsims=10000):
 
-    #1 sec 50-300 keV peak flux ph/cm2/s
-    time = interval#1.0#0.064 # s
-    f=np.logspace(np.log10(minflux),2.2,50)
-    p=f**-0.9#1.5 # comes from fitting GBM sGRB logN-log peak flux
-    pnorm=p/np.sum(p)
-    r=np.random.choice(f,p=pnorm,size=nsims)
+    # 1 sec 50-300 keV peak flux ph/cm2/s
+    # time = interval  # 1.0#0.064 # s
+    f = np.logspace(np.log10(minflux), 2.2, 50)
+    p = f**-0.9  # 1.5 # comes from fitting GBM sGRB logN-log peak flux
+    pnorm = p/np.sum(p)
+    r = np.random.choice(f, p=pnorm, size=nsims)
     
     # bg_gbm=bgrate*time
-    # bg_bc=bgrate*np.max(aeff_bc)/np.max(aeff_gbm)*time  # scaling from GBM average background rate
-    src_bc=r*np.max(aeff_bc)*time
-    src_gbm=r*np.max(aeff_gbm)*time
+    # scaling from GBM average background rate
+    # bg_bc=bgrate*np.max(aeff_bc)/np.max(aeff_gbm)*time
     
-    simgbmpfsample = np.array(r)
-    simgbmcr = np.array(src_gbm/time)
-    simbcpfsample = np.array(r)
-    simbccr = np.array(src_bc/time)
+    # src_bc = r*np.max(aeff_bc)*time
+    # src_gbm = r*np.max(aeff_gbm)*time
     
-    return r#simgbmcr,simbccr,simgbmpfsample,simbcpfsample
+    # simgbmpfsample = np.array(r)
+    # simgbmcr = np.array(src_gbm/time)
+    # simbcpfsample = np.array(r)
+    # simbccr = np.array(src_bc/time)
+    
+    return r  # simgbmcr,simbccr,simgbmpfsample,simbcpfsample
 
 
-def grb_spectra(gbmbursts, gbmaeff, bcaeff, eng, nsims, interval=1.0):
+def grb_spectra(gbmbursts, gbmaeff, bcaeff, eng):
 
     """Integrating the best fit spectrum for each GRB in the energy range
        of 50-300 keV to get max. observed photon flux.  Doing the same
@@ -283,12 +263,6 @@ def grb_spectra(gbmbursts, gbmaeff, bcaeff, eng, nsims, interval=1.0):
 
     eng : numpy array
         Energy range in keV
-
-    nsims : int
-        Number of simulations to run
-    
-    interval : float
-        Interval in seconds to calculate over (default 1.0)
     
     Returns
     -----------
@@ -392,3 +366,78 @@ def grb_spectra(gbmbursts, gbmaeff, bcaeff, eng, nsims, interval=1.0):
 
     return gbmflux2counts, bcflux2counts, realpf
     # simgbmcr,simbccr,simpf,simpf,realpf,pinterval
+
+    
+def calcSignificance(simbccr, simgbmcr, secondhighestbc, secondhighestgbm,
+                     bcaeff, gbmaeff, nsims=10000, bgrate=300., pinterval=1.):
+    
+    """Calculates the significance of bursts by looking at the counts over
+    background in some interval.  If the significance is over 4.5 sigma
+    then it is returned.
+
+    Parameters
+    ----------
+    simbccr :
+
+    simgbmcr : 
+
+    secondhighestbc : 
+
+    secondhighestgbm : 
+
+    bcaeff : 
+
+    gbmaeff : 
+
+    nsims : int
+
+    bgrate : float
+
+    pinterval : float
+
+    Retruns 
+    -----------
+
+    detectbc : 
+
+    detectgbm : 
+
+    """
+
+    # Solve for the number of detected counts
+    # which will equal our source photons
+    sourcegbm = simgbmcr*secondhighestgbm*pinterval
+    sourcebc = simbccr*secondhighestbc*pinterval
+    #  randomize background rate around typical
+    # background of 300 cts/s (50-300 keV, GBM)
+    bckgrd = np.random.poisson(bgrate, nsims)
+    scaledgbmbckgrd = bckgrd*pinterval
+    scaledbcbckgrd = bckgrd*np.median(bcaeff/gbmaeff)*pinterval
+    #  creating an array of zeros that I can manipulate
+    # to create an array of detected GRBs
+    detectgbm = np.zeros(len(sourcegbm))
+    detectbc = np.zeros(len(sourcebc))
+
+    #  calculate the significance of the second highest
+    # exposure detector. If the significance is greater
+    # than 4.5 sigma than the burst is detectable.
+    for u in range(len(sourcegbm)):
+        if sourcegbm[u] > 0:
+            sig = sourcegbm[u] / (np.sqrt(sourcegbm[u] +
+                                          scaledgbmbckgrd[u]))
+            if sig > 4.5:
+                detectgbm[u] = 1.0
+            else:
+                detectgbm[u] = 0.0
+
+    for j in range(len(sourcebc)):
+        if sourcebc[j] > 0:
+            sig = sourcebc[j] / (np.sqrt(sourcebc[j] + scaledbcbckgrd[j]))
+            if sig > 4.5:
+                detectbc[j] = 1.0
+            else:
+                detectbc[j] = 0.0
+        else:
+            sig = 0
+
+    return detectbc, detectgbm

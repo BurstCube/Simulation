@@ -184,6 +184,7 @@ def test_match_catlogs_name():
 
     assert(True)
 
+    
 def test_getSGRBs():
 
     """Tests the getSGRBs function"""
@@ -193,3 +194,40 @@ def test_getSGRBs():
     sgbm = getSGRBs()
 
     assert(len(sgbm) == 395)
+
+    
+def test_grb_spectra():
+
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import getSGRBs
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import grb_spectra
+    
+    
+    sgbm = getSGRBs()
+
+    eng = np.logspace(np.log10(50), np.log10(300), 10)
+
+    gbmaeff = [125.4054839, 127.84540021, 130.33278805, 132.64167297,
+               132.03875824, 131.43858402, 120.97915451, 106.6014959,
+               93.93253717,  82.76920942]
+
+    bcaeff = [56.00570302, 57.98036755, 60.02465535, 60.87963188,
+              61.68515835, 61.75921551, 61.75779899, 58.45768644,
+              54.84448836, 48.9809135]
+
+    gbmflux2counts, bcflux2counts, realpf = grb_spectra(sgbm, gbmaeff,
+                                                        bcaeff, eng)
+    
+    assert(realpf.sum() == 2064.0586284)
+
+    
+def test_logNlogS():
+
+    """Tests the logNlogS function.  Note that this function has a random
+    element to it so to determine the numbers below, it was run 10,000
+    times to get the mean of 34,000 and std_dev of 2500."""
+    
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import logNlogS
+
+    r = logNlogS()
+
+    assert(np.abs(r.sum() - 34000) < 2500)
