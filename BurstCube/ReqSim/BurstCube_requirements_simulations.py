@@ -76,6 +76,8 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 
         """
 
+    RecSimDict = {}
+    
     bcaeff, gbmaeff, secondhighestbc, secondhighestgbm, eng = init(ea_dir,
                                                                    nsims)
 
@@ -117,9 +119,18 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     duty = 10./(bcbursts/gbmduty)
     print("duty cycle to detect 10 sGRBs/yr = %.2f" % duty)
 
-    fluxlim10, fluxlim20, nbursts10, nbrusts20, wbc, wg, so, c = fluxlim(simgbmcr, simbccr,
-                                                   detectbc, detectgbm,
-                                                   bcbursts, simbcpfsample)
+    #  Creating plot of peak flux versus counts for real and simulated GBM
+    # w = np.where(pf > 0)[0]
+    wg = np.where(simgbmcr*detectgbm > 0.)[0]
+    wbc = np.where(simbccr*detectbc > 0.)[0] 
+    # Min sensitivity to detect 10 per year
+    nbursts10 = bcbursts-10.
+    nbursts20 = bcbursts-20.
+    so = np.argsort(simbcpfsample[wbc])
+    #  gso = np.argsort(simgbmpfsample[wg])
+    c = np.cumsum(np.ones(len(wbc)))/len(wbc)*bcbursts
+    fluxlim10 = loginterpol(c, simbcpfsample[wbc[so]], nbursts10)
+    fluxlim20 = loginterpol(c, simbcpfsample[wbc[so]], nbursts20)
 
     print("flux limit to detect 10 sGRBs/yr = %.2f" % fluxlim10 + ' ph/cm2/s')
     print("flux limit to detect 20 sGRBs/yr = %.2f" % fluxlim20+' ph/cm2/s')
@@ -158,23 +169,44 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     print("Mission Duration to detect 10 sGRBs = " + "%.1f" %
           (10./bcbursts*12.)+' months')
 
-    return realpf, simgbmcr, simbccr, detectbc, \
-        detectgbm, bcbursts, simbcpfsample, simgbmpfsample
+    RecSimDict["realpf"] = realpf
+    RecSimDict["wg"] = wg
+    RecSimDict["wbc"] = wbc
+    RecSimDict["nbursts10"] = nbursts10
+    RecSimDict["nbursts20"] = nbursts20
+    RecSimDict["so"] = so
+    RecSimDict["c"] = c
+    RecSimDict["fluxlim10"] = fluxlim10
+    RecSimDict["fluxlim20"] = fluxlim20
+    RecSimDict["simgbmcr"] = simbccr
+    RecSimDict["simbccr"] = simbccr
+    RecSimDict["simgbmpfsample"] = simgbmpfsample
+    RecSimDict["simbcpfsample"] = simbcpfsample
+    
+    return RecSimDict
     
     #  return realgbmflux,simgbmpfsample
 
     
-def plotRun(realpf, simgbmcr, simbccr, detectbc,
-            detectgbm, bcbursts, simbcpfsample, simgbmpfsample):
+def plotRun(RecSimDict):
 
     import matplotlib.pylab as plot
 
-    realgbmflux = realpf
+    realgbmflux = RecSimDict["realpf"]
+    simgbmcr = RecSimDict["simgbmcr"]
+    simbccr = RecSimDict["simbccr"]
+    wg = RecSimDict["wg"]
+    wbc = RecSimDict["wbc"]
+    simgbmpfsample = RecSimDict["simgbmpfsample"]
+    simbcpfsample = RecSimDict["simbcpfsample"]
+    so = RecSimDict["so"]
+    c = RecSimDict["c"]
+    fluxlim10 = RecSimDict["fluxlim10"]
+    fluxlim20 = RecSimDict["fluxlim20"]
+    nbursts10 = RecSimDict["nbursts10"]
+    nbursts20 = RecSimDict["nbursts20"]
+    
     wreal = np.where(realgbmflux > 0)[0]
-
-    fluxlim10, fluxlim20, nbursts10, nbursts20, wbc, wg, so, c = fluxlim(simgbmcr, simbccr,
-                                                   detectbc, detectgbm,
-                                                   bcbursts, simbcpfsample)
 
     plot.subplot(2, 2, 1)
     plot.hist(simgbmcr[wg], label='GBM',
@@ -481,22 +513,3 @@ def numberSeen(ratiobc, ratiogbm):
 
     return ratiobc/ratiogbm * 40.
 
-
-def fluxlim(simgbmcr, simbccr, detectbc, detectgbm, bcbursts, simbcpfsample):
-
-    #  Creating plot of peak flux versus counts for real and simulated GBM
-    # w = np.where(pf > 0)[0]
-    wg = np.where(simgbmcr*detectgbm > 0.)[0]
-    wbc = np.where(simbccr*detectbc > 0.)[0]
-
-    # Min sensitivity to detect 10 per year
-    nbursts10 = bcbursts-10.
-    nbursts20 = bcbursts-20.
-    so = np.argsort(simbcpfsample[wbc])
-    #  gso = np.argsort(simgbmpfsample[wg])
-    c = np.cumsum(np.ones(len(wbc)))/len(wbc)*bcbursts
-
-    fluxlim10 = loginterpol(c, simbcpfsample[wbc[so]], nbursts10)
-    fluxlim20 = loginterpol(c, simbcpfsample[wbc[so]], nbursts20)
-
-    return fluxlim10, fluxlim20, nbursts10, nbursts20, wbc, wg, so, c
