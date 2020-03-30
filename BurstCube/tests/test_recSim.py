@@ -231,3 +231,26 @@ def test_logNlogS():
     r = logNlogS()
 
     assert(np.abs(r.sum() - 34000) < 2500)
+
+    
+def test_detectionFrac():
+
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import detectionFrac
+    
+    a = np.array([1, 0, 1, 0, 1, 0, 1, 1, 0, 0])
+  
+    frac = detectionFrac(a)
+
+    assert(frac == 0.5)
+
+def test_numberSeen():
+
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import numberSeen
+
+    a = 0.1675
+    b = 0.3364
+    
+    seen = numberSeen(a,b)
+
+    assert(seen == 19.91676575505351)
+    

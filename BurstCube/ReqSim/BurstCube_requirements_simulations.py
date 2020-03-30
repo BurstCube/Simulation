@@ -104,29 +104,44 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
                                            secondhighestgbm, bcaeff, gbmaeff,
                                            nsims, bgrate, pinterval=1.)
 
+    ratiobc = detectionFrac(detectbc)
+    ratiogbm = detectionFrac(detectgbm)
+    print(ratiogbm)
+    print(ratiobc)
+
+    print('fraction of GBM sGRBs BC will detect = %0.2f' % (ratiobc/ratiogbm))
+    #  number of bursts BurstCube will see a year
+    bcbursts = numberSeen(ratiobc, ratiogbm)
+    print('bc rate = %.2f' % bcbursts+' sGRBs/yr')
+    
+    
     #  Creating plot of peak flux versus counts for real and simulated GBM
     # w = np.where(pf > 0)[0]
     wg = np.where(simgbmcr*detectgbm > 0.)[0]
     wbc = np.where(simbccr*detectbc > 0.)[0]
 
-    # fig = plot.figure(figsize=(10, 8))
-    plot.subplot(2,2,1)
-    # plot.hist(gbmcr[w],label='real GBM',bins=np.logspace(1,6,40),color='orange')
-    plot.hist(simgbmcr[wg],label='GBM',bins=np.logspace(1,6,40),alpha=0.7,color='blue')
-    plot.hist(simbccr[wbc],label='BurstCube',bins=np.logspace(1,6,40),alpha=0.7,color='green')
+    plot.subplot(2, 2, 1)
+    plot.hist(simgbmcr[wg], label='GBM',
+              bins=np.logspace(1, 6, 40), alpha=0.7, color='blue')
+    plot.hist(simbccr[wbc], label='BurstCube',
+              bins=np.logspace(1, 6, 40), alpha=0.7, color='green')
     plot.xlabel('Count Rate (50-300 keV; cts/s)')
     plot.xscale('log')
     plot.yscale('log')
-    plot.xlim([10,5e4])
+    plot.xlim([10, 5e4])
     plot.ylabel('N Simulated  sGRBs')
 
     plot.legend()
-    plot.subplot(2,2,2)
-    plot.hist(simgbmpfsample,label='Simulated total',bins=np.logspace(-1,4,40),alpha=1.0,color='C3')
-    plot.hist(realgbmflux[wreal],label='real GBM',bins=np.logspace(-1,4,40),color='orange', alpha=0.7)
+    plot.subplot(2, 2, 2)
+    plot.hist(simgbmpfsample, label='Simulated total',
+              bins=np.logspace(-1, 4, 40), alpha=1.0, color='C3')
+    plot.hist(realgbmflux[wreal], label='real GBM',
+              bins=np.logspace(-1, 4, 40), color='orange', alpha=0.7)
     #  this is the simulated GBM
-    plot.hist(simgbmpfsample[wg],label='GBM',bins=np.logspace(-1,4,40),alpha=0.5,color='blue')
-    plot.hist(simbcpfsample[wbc],label='BC',bins=np.logspace(-1,4,40),alpha=0.5,color='green')
+    plot.hist(simgbmpfsample[wg], label='GBM',
+              bins=np.logspace(-1, 4, 40), alpha=0.5, color='blue')
+    plot.hist(simbcpfsample[wbc], label='BC',
+              bins=np.logspace(-1, 4, 40), alpha=0.5, color='green')
     plot.xlabel('Peak Flux (50-300 keV; ph/cm2/s)')
     #  plot.hist(flux[w],label='BC',bins=np.logspace(-1,2,40),alpha=0.7,color='red')
     plot.xscale('log')
@@ -136,20 +151,6 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     plot.ylabel('N Simulated  sGRBs')
 
     #	plot.show()
-
-    #  solve for the detection fraction of BurstCube and Simulated GBM
-    detgbm = np.where(detectgbm == 1)[0]
-    ratiogbm = float(len(detgbm)) / float(len(detectgbm))
-    print(ratiogbm)
-
-    detbc = np.where(detectbc == 1)[0]
-    ratiobc = float(len(detbc)) / float(len(detectbc))
-    print(ratiobc)
-
-    print('fraction of GBM sGRBs BC will detect = %0.2f'%(ratiobc/ratiogbm))
-    #  number of bursts BurstCube will see a year
-    bcbursts = ratiobc/ratiogbm * 40.
-    print('bc rate = %.2f'%bcbursts+' sGRBs/yr')
 
     #  Duty Cycle to detect 20 sGRBs/yr
     gbmduty=0.85
@@ -441,3 +442,34 @@ def calcSignificance(simbccr, simgbmcr, secondhighestbc, secondhighestgbm,
             sig = 0
 
     return detectbc, detectgbm
+
+
+def detectionFrac(detect):
+
+    """Calculates the fraction of detections by looking at an array of 1
+    or 0 and seeing which ones are 1.
+
+    Parameters
+    ----------
+    detect : numpy.ndarray
+        An array of 1 or 0 that shows detections
+
+    Returns 
+    ----------
+    ratio : float
+        The fraciton of detect that is 1.
+
+    """
+    
+    if type(detect) != np.ndarray:
+        raise TypeError("Must be numpy ndarray")
+
+    det = np.where(detect == 1)[0]
+    ratio = float(len(det)) / float(len(detect))
+
+    return(ratio)
+
+
+def numberSeen(ratiobc, ratiogbm):
+
+    return ratiobc/ratiogbm * 40.
