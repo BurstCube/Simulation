@@ -132,6 +132,41 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     fluxlim10 = loginterpol(c, simbcpfsample[wbc[so]], nbursts10)
     fluxlim20 = loginterpol(c, simbcpfsample[wbc[so]], nbursts20)
 
+    #  FoV - adjusted exposure alt until total reached 20
+    #  BCFoVrad = 90-0.  # deg radius
+    #  BCFoV = (1-np.cos(np.radians(BCFoVrad)))/2.*4.*np.pi
+    #  print("FoV for "+"%.1f" % BCFoV+' ster')
+
+    RecSimDict["realpf"] = realpf
+    RecSimDict["wg"] = wg
+    RecSimDict["wbc"] = wbc
+    RecSimDict["nbursts10"] = nbursts10
+    RecSimDict["nbursts20"] = nbursts20
+    RecSimDict["so"] = so
+    RecSimDict["c"] = c
+    RecSimDict["fluxlim10"] = fluxlim10
+    RecSimDict["fluxlim20"] = fluxlim20
+    RecSimDict["simgbmcr"] = simbccr
+    RecSimDict["simbccr"] = simbccr
+    RecSimDict["simgbmpfsample"] = simgbmpfsample
+    RecSimDict["simbcpfsample"] = simbcpfsample
+    RecSimDict["bcbursts"] = bcbursts
+    
+    return RecSimDict
+    
+    #  return realgbmflux,simgbmpfsample
+
+def printRun(RecSimDict):
+
+    fluxlim10 = RecSimDict["fluxlim10"]
+    fluxlim20 = RecSimDict["fluxlim20"]
+    simbcpfsample = RecSimDict["simbcpfsample"]
+    simgbmpfsample = RecSimDict["simgbmpfsample"]
+    wbc = RecSimDict["wbc"]
+    wg = RecSimDict["wg"]
+    so = RecSimDict["so"]
+    bcbursts = RecSimDict["bcbursts"]
+    
     print("flux limit to detect 10 sGRBs/yr = %.2f" % fluxlim10 + ' ph/cm2/s')
     print("flux limit to detect 20 sGRBs/yr = %.2f" % fluxlim20+' ph/cm2/s')
     print('expected minimum flux = '+"%.2f" %
@@ -146,11 +181,6 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
           simbcpfsample[wbc[so[int(0.9*len(so))]]]+' ph/cm2/s')
     print('expected 95% maximum flux = '+"%.2f" %
           simbcpfsample[wbc[so[int(0.95*len(so))]]]+' ph/cm2/s')
-
-    #  FoV - adjusted exposure alt until total reached 20
-    #  BCFoVrad = 90-0.  # deg radius
-    #  BCFoV = (1-np.cos(np.radians(BCFoVrad)))/2.*4.*np.pi
-    #  print("FoV for "+"%.1f" % BCFoV+' ster')
 
     #  max distance of GW170817
     mpc2cm = 3.086e24
@@ -168,24 +198,6 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     #  mission lifetime to detect 10 sGRBs
     print("Mission Duration to detect 10 sGRBs = " + "%.1f" %
           (10./bcbursts*12.)+' months')
-
-    RecSimDict["realpf"] = realpf
-    RecSimDict["wg"] = wg
-    RecSimDict["wbc"] = wbc
-    RecSimDict["nbursts10"] = nbursts10
-    RecSimDict["nbursts20"] = nbursts20
-    RecSimDict["so"] = so
-    RecSimDict["c"] = c
-    RecSimDict["fluxlim10"] = fluxlim10
-    RecSimDict["fluxlim20"] = fluxlim20
-    RecSimDict["simgbmcr"] = simbccr
-    RecSimDict["simbccr"] = simbccr
-    RecSimDict["simgbmpfsample"] = simgbmpfsample
-    RecSimDict["simbcpfsample"] = simbcpfsample
-    
-    return RecSimDict
-    
-    #  return realgbmflux,simgbmpfsample
 
     
 def plotRun(RecSimDict):
