@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pylab as plot
 import BurstCube.ReqSim.grb_catalogs as grb_catalogs
 #  from BurstCube.LocSim.Detector import *
 #  from BurstCube.LocSim.Spacecraft import *
@@ -95,9 +94,6 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     simgbmpfsample = pf
     simbcpfsample = pf
 
-    realgbmflux = realpf
-    wreal = np.where(realgbmflux > 0)[0]
-
     pf = simgbmpfsample
 
     detectbc, detectgbm = calcSignificance(simbccr, simgbmcr, secondhighestbc,
@@ -113,12 +109,72 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     #  number of bursts BurstCube will see a year
     bcbursts = numberSeen(ratiobc, ratiogbm)
     print('bc rate = %.2f' % bcbursts+' sGRBs/yr')
+
+    #  Duty Cycle to detect 20 sGRBs/yr
+    gbmduty = 0.85
+    duty = 20./(bcbursts/gbmduty)
+    print("duty cycle to detect 20 sGRBs/yr = %.2f" % duty)
+    duty = 10./(bcbursts/gbmduty)
+    print("duty cycle to detect 10 sGRBs/yr = %.2f" % duty)
+
+    fluxlim10, fluxlim20, nbursts10, nbrusts20, wbc, wg, so, c = fluxlim(simgbmcr, simbccr,
+                                                   detectbc, detectgbm,
+                                                   bcbursts, simbcpfsample)
+
+    print("flux limit to detect 10 sGRBs/yr = %.2f" % fluxlim10 + ' ph/cm2/s')
+    print("flux limit to detect 20 sGRBs/yr = %.2f" % fluxlim20+' ph/cm2/s')
+    print('expected minimum flux = '+"%.2f" %
+          min(simbcpfsample[wbc[so]])+' ph/cm2/s')
+    print('expected maximum flux = '+"%.2f" %
+          max(simbcpfsample[wbc[so]])+' ph/cm2/s')
+    print('expected 5% maximum flux = '+"%.2f" %
+          simbcpfsample[wbc[so[int(0.05*len(so))]]]+' ph/cm2/s')
+    print('expected 10% maximum flux = '+"%.2f" %
+          simbcpfsample[wbc[so[int(0.1*len(so))]]]+' ph/cm2/s')
+    print('expected 90% maximum flux = '+"%.2f" %
+          simbcpfsample[wbc[so[int(0.9*len(so))]]]+' ph/cm2/s')
+    print('expected 95% maximum flux = '+"%.2f" %
+          simbcpfsample[wbc[so[int(0.95*len(so))]]]+' ph/cm2/s')
+
+    #  FoV - adjusted exposure alt until total reached 20
+    #  BCFoVrad = 90-0.  # deg radius
+    #  BCFoV = (1-np.cos(np.radians(BCFoVrad)))/2.*4.*np.pi
+    #  print("FoV for "+"%.1f" % BCFoV+' ster')
+
+    #  max distance of GW170817
+    mpc2cm = 3.086e24
+    fgw = 3.7  # ph/cm2/s
+    fmax = min(simgbmpfsample[wg])
+    dgw = 42.9*mpc2cm
+    dmax = np.sqrt(fgw*dgw**2/fmax)
+    f = 80.*mpc2cm/dmax
+    print("%.2f" % (dmax/mpc2cm*f)+' Mpc - distance GBM for GW170817')
+
+    fmax = min(simbcpfsample[wbc])
+    dmax = np.sqrt(fgw*dgw**2/fmax)
+    print("%.2f" % (dmax/mpc2cm*f)+' Mpc - distance BC for GW170817')
+
+    #  mission lifetime to detect 10 sGRBs
+    print("Mission Duration to detect 10 sGRBs = " + "%.1f" %
+          (10./bcbursts*12.)+' months')
+
+    return realpf, simgbmcr, simbccr, detectbc, \
+        detectgbm, bcbursts, simbcpfsample, simgbmpfsample
     
+    #  return realgbmflux,simgbmpfsample
+
     
-    #  Creating plot of peak flux versus counts for real and simulated GBM
-    # w = np.where(pf > 0)[0]
-    wg = np.where(simgbmcr*detectgbm > 0.)[0]
-    wbc = np.where(simbccr*detectbc > 0.)[0]
+def plotRun(realpf, simgbmcr, simbccr, detectbc,
+            detectgbm, bcbursts, simbcpfsample, simgbmpfsample):
+
+    import matplotlib.pylab as plot
+
+    realgbmflux = realpf
+    wreal = np.where(realgbmflux > 0)[0]
+
+    fluxlim10, fluxlim20, nbursts10, nbursts20, wbc, wg, so, c = fluxlim(simgbmcr, simbccr,
+                                                   detectbc, detectgbm,
+                                                   bcbursts, simbcpfsample)
 
     plot.subplot(2, 2, 1)
     plot.hist(simgbmcr[wg], label='GBM',
@@ -146,78 +202,28 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     #  plot.hist(flux[w],label='BC',bins=np.logspace(-1,2,40),alpha=0.7,color='red')
     plot.xscale('log')
     plot.yscale('log')
-    plot.xlim([.1,300])
+    plot.xlim([.1, 300])
     plot.legend()
     plot.ylabel('N Simulated  sGRBs')
 
-    #	plot.show()
+    # plot.show()
 
-    #  Duty Cycle to detect 20 sGRBs/yr
-    gbmduty=0.85
-    duty=20./(bcbursts/gbmduty)
-    print("duty cycle to detect 20 sGRBs/yr = %.2f" %duty)
-    duty=10./(bcbursts/gbmduty)
-    print("duty cycle to detect 10 sGRBs/yr = %.2f" %duty)
-
-    # Min sensitivity to detect 10 per year
-    nbursts10=bcbursts-10.
-    nbursts20=bcbursts-20.
-    so=np.argsort(simbcpfsample[wbc])
-    gso=np.argsort(simgbmpfsample[wg])
-    c=np.cumsum(np.ones(len(wbc)))/len(wbc)*bcbursts
-    plot.subplot(2,2,3)
-    plot.plot(simbcpfsample[wbc[so]],c)
+    plot.subplot(2, 2, 3)
+    plot.plot(simbcpfsample[wbc[so]], c)
     plot.xlabel(r'BurstCube 50-300 keV Peak Flux (ph cm$^{-2}$ s$^{-1}$)')
     plot.ylabel('Cumulative Number')
     plot.xscale('log')
-    fluxlim10=loginterpol(c,simbcpfsample[wbc[so]],nbursts10)
-    fluxlim20=loginterpol(c,simbcpfsample[wbc[so]],nbursts20)
-    plot.plot([fluxlim10,fluxlim10],[nbursts10,nbursts10],marker='*',label='Limit for 10 sGRBs')
-    plot.plot([fluxlim20,fluxlim20],[nbursts20,nbursts20],marker='*',label='Limit for 20 sGRBs')
-    plot.xlim([1,100])
+    
+    plot.plot([fluxlim10, fluxlim10], [nbursts10, nbursts10],
+              marker='*', label='Limit for 10 sGRBs')
+    plot.plot([fluxlim20, fluxlim20], [nbursts20, nbursts20],
+              marker='*', label='Limit for 20 sGRBs')
+    plot.xlim([1, 100])
 
-    print("flux limit to detect 10 sGRBs/yr = %.2f"%fluxlim10+' ph/cm2/s')
-    print("flux limit to detect 20 sGRBs/yr = %.2f"%fluxlim20+' ph/cm2/s')
-    print('expected minimum flux = '+"%.2f"%min(simbcpfsample[wbc[so]])+' ph/cm2/s')
-    print('expected maximum flux = '+"%.2f"%max(simbcpfsample[wbc[so]])+' ph/cm2/s')
-    print('expected 5% maximum flux = '+"%.2f"%simbcpfsample[wbc[so[int(0.05*len(so))]]]+' ph/cm2/s')
-    print('expected 10% maximum flux = '+"%.2f"%simbcpfsample[wbc[so[int(0.1*len(so))]]]+' ph/cm2/s')
-    print('expected 90% maximum flux = '+"%.2f"%simbcpfsample[wbc[so[int(0.9*len(so))]]]+' ph/cm2/s')
-    print('expected 95% maximum flux = '+"%.2f"%simbcpfsample[wbc[so[int(0.95*len(so))]]]+' ph/cm2/s')
-
-    #  print('GBM')
-    #  print('expected minimum flux = '+"%.2f"%min(simgbmpfsample[wg[gso]])+' ph/cm2/s')
-    #  print('expected maximum flux = '+"%.2f"%max(simgbmpfsample[wg[gso]])+' ph/cm2/s')
-    #  print('expected 5% maximum flux = '+"%.2f"%simgbmpfsample[wg[gso[int(0.05*len(gso))]]]+' ph/cm2/s')
-    #  print('expected 10% maximum flux = '+"%.2f"%simgbmpfsample[wg[gso[int(0.1*len(gso))]]]+' ph/cm2/s')
-    #  print('expected 90% maximum flux = '+"%.2f"%simgbmpfsample[wg[gso[int(0.9*len(gso))]]]+' ph/cm2/s')
-    #  print('expected 95% maximum flux = '+"%.2f"%simgbmpfsample[wg[gso[int(0.95*len(gso))]]]+' ph/cm2/s')
-
-    #  FoV - adjusted exposure alt until total reached 20
-    BCFoVrad = 90-0. # deg radius
-    BCFoV=(1-np.cos(np.radians(BCFoVrad)))/2.*4.*np.pi
-    #  print("FoV for "+"%.1f" % BCFoV+' ster')
-
-    #  max distance of GW170817
-    mpc2cm=3.086e24
-    fgw=3.7 # ph/cm2/s
-    fmax=min(simgbmpfsample[wg])
-    dgw=42.9*mpc2cm
-    dmax=np.sqrt(fgw*dgw**2/fmax)
-    f=80.*mpc2cm/dmax
-    print("%.2f" % (dmax/mpc2cm*f)+' Mpc - distance GBM for GW170817')
-
-    fmax=min(simbcpfsample[wbc])
-    dmax=np.sqrt(fgw*dgw**2/fmax)
-    print("%.2f" % (dmax/mpc2cm*f)+' Mpc - distance BC for GW170817')
-
-    #  mission lifetime to detect 10 sGRBs
-    print("Mission Duration to detect 10 sGRBs = " + "%.1f" % (10./bcbursts*12.)+' months')
     plot.legend()
     plot.show()
-    #  return realgbmflux,simgbmpfsample
 
-
+    
 def logNlogS(minflux=0.5, nsims=10000):
 
     # 1 sec 50-300 keV peak flux ph/cm2/s
@@ -355,8 +361,9 @@ def grb_spectra(gbmbursts, gbmaeff, bcaeff, eng):
             grb['PFLX_SPECTRUM_START']
 
     # flux = gbmbursts['FLUX_BATSE_1024']
-    gbmflux2counts = gbmcr/pf
-    bcflux2counts = bccr/pf
+
+    gbmflux2counts = np.divide(gbmcr, pf)
+    bcflux2counts = np.divide(bccr, pf)
     # fluxwrong=flux/pf#*pflux_interval
     # r = np.array(np.round(np.random.rand(nsims)*(len(mo)-1)).astype('int'))
     # simgbmcr = gbmcr[r]*interval #*fluxwrong[r]#*pflux_interval[r]
@@ -473,3 +480,23 @@ def detectionFrac(detect):
 def numberSeen(ratiobc, ratiogbm):
 
     return ratiobc/ratiogbm * 40.
+
+
+def fluxlim(simgbmcr, simbccr, detectbc, detectgbm, bcbursts, simbcpfsample):
+
+    #  Creating plot of peak flux versus counts for real and simulated GBM
+    # w = np.where(pf > 0)[0]
+    wg = np.where(simgbmcr*detectgbm > 0.)[0]
+    wbc = np.where(simbccr*detectbc > 0.)[0]
+
+    # Min sensitivity to detect 10 per year
+    nbursts10 = bcbursts-10.
+    nbursts20 = bcbursts-20.
+    so = np.argsort(simbcpfsample[wbc])
+    #  gso = np.argsort(simgbmpfsample[wg])
+    c = np.cumsum(np.ones(len(wbc)))/len(wbc)*bcbursts
+
+    fluxlim10 = loginterpol(c, simbcpfsample[wbc[so]], nbursts10)
+    fluxlim20 = loginterpol(c, simbcpfsample[wbc[so]], nbursts20)
+
+    return fluxlim10, fluxlim20, nbursts10, nbursts20, wbc, wg, so, c
