@@ -156,6 +156,7 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     
     #  return realgbmflux,simgbmpfsample
 
+    
 def printRun(RecSimDict):
 
     fluxlim10 = RecSimDict["fluxlim10"]
@@ -182,19 +183,13 @@ def printRun(RecSimDict):
     print('expected 95% maximum flux = '+"%.2f" %
           simbcpfsample[wbc[so[int(0.95*len(so))]]]+' ph/cm2/s')
 
-    #  max distance of GW170817
-    mpc2cm = 3.086e24
-    fgw = 3.7  # ph/cm2/s
-    fmax = min(simgbmpfsample[wg])
-    dgw = 42.9*mpc2cm
-    dmax = np.sqrt(fgw*dgw**2/fmax)
-    f = 80.*mpc2cm/dmax
-    print("%.2f" % (dmax/mpc2cm*f)+' Mpc - distance GBM for GW170817')
+    distGBM, distBC = maxDistance(min(simgbmpfsample[wg]),
+                                  min(simbcpfsample[wbc]))
+    print("%.2f" % distGBM + ' Mpc - distance GBM for GW170817')
+    print("%.2f" % distBC + ' Mpc - distance BC for GW170817')
+    
 
-    fmax = min(simbcpfsample[wbc])
-    dmax = np.sqrt(fgw*dgw**2/fmax)
-    print("%.2f" % (dmax/mpc2cm*f)+' Mpc - distance BC for GW170817')
-
+    
     #  mission lifetime to detect 10 sGRBs
     print("Mission Duration to detect 10 sGRBs = " + "%.1f" %
           (10./bcbursts*12.)+' months')
@@ -525,3 +520,43 @@ def numberSeen(ratiobc, ratiogbm):
 
     return ratiobc/ratiogbm * 40.
 
+
+def maxDistance(minFluxGBM, minFluxBC):
+
+    """Calculates the maximum distance a mission can see GW170817.
+
+    Parameters
+    ---------
+    minFluxGBM : float
+        Minimum detectable flux for GBM
+
+    minFluxBC : float
+        Minimum detectable flux for BC
+
+
+    Returns
+    ---------
+    distGBM : float
+        Distance in Mpc for GBM
+
+    distBC : float
+        Distance in Mpc for BC
+
+    """
+    
+    #  max distance of GW170817f
+    mpc2cm = 3.086e24
+    fgw = 3.7  # ph/cm2/s
+    fmax = minFluxGBM
+    dgw = 42.9*mpc2cm
+    dmax = np.sqrt(fgw*dgw**2/fmax)
+    f = 80.*mpc2cm/dmax
+
+    distGBM = dmax/mpc2cm*f
+    
+    fmax = minFluxBC
+    dmax = np.sqrt(fgw*dgw**2/fmax)
+
+    distBC = dmax/mpc2cm*f
+
+    return distGBM, distBC

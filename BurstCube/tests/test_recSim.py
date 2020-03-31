@@ -253,4 +253,16 @@ def test_numberSeen():
     seen = numberSeen(a,b)
 
     assert(seen == 19.91676575505351)
+
     
+def test_maxDistance():
+
+    from BurstCube.ReqSim.BurstCube_requirements_simulations import maxDistance
+
+    minFluxGBM = 0.7113679421626011
+    minFluxBC = 1.1383085652167557
+
+    distGBM, distBC = maxDistance(minFluxGBM, minFluxBC)
+
+    assert(np.abs(distGBM - 80.00) < 0.01)
+    assert(np.abs(distBC - 63.24) < 0.01)
