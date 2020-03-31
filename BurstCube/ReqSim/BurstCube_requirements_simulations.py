@@ -82,7 +82,6 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
                                                                    nsims)
 
     sgbm = getSGRBs(ea_dir=ea_dir)
-    print("Number of short GRBs detected by GBM: " + str(len(sgbm)))
     
     gbmflux2counts, bcflux2counts, realpf = grb_spectra(sgbm, gbmaeff,
                                                         bcaeff, eng)
@@ -104,20 +103,13 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
 
     ratiobc = detectionFrac(detectbc)
     ratiogbm = detectionFrac(detectgbm)
-    print(ratiogbm)
-    print(ratiobc)
-
-    print('fraction of GBM sGRBs BC will detect = %0.2f' % (ratiobc/ratiogbm))
+ 
     #  number of bursts BurstCube will see a year
     bcbursts = numberSeen(ratiobc, ratiogbm)
-    print('bc rate = %.2f' % bcbursts+' sGRBs/yr')
 
     #  Duty Cycle to detect 20 sGRBs/yr
     gbmduty = 0.85
     duty = 20./(bcbursts/gbmduty)
-    print("duty cycle to detect 20 sGRBs/yr = %.2f" % duty)
-    duty = 10./(bcbursts/gbmduty)
-    print("duty cycle to detect 10 sGRBs/yr = %.2f" % duty)
 
     #  Creating plot of peak flux versus counts for real and simulated GBM
     # w = np.where(pf > 0)[0]
@@ -137,6 +129,10 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     #  BCFoV = (1-np.cos(np.radians(BCFoVrad)))/2.*4.*np.pi
     #  print("FoV for "+"%.1f" % BCFoV+' ster')
 
+    RecSimDict["lensgbm"] = len(sgbm)
+    RecSimDict["ratiogbm"] = ratiogbm
+    RecSimDict["ratiobc"] = ratiobc
+    RecSimDict["duty"] = duty
     RecSimDict["realpf"] = realpf
     RecSimDict["wg"] = wg
     RecSimDict["wbc"] = wbc
@@ -167,7 +163,18 @@ def printRun(RecSimDict):
     wg = RecSimDict["wg"]
     so = RecSimDict["so"]
     bcbursts = RecSimDict["bcbursts"]
+    ratiogbm = RecSimDict["ratiogbm"]
+    ratiobc = RecSimDict["ratiobc"]
+    duty = RecSimDict["duty"]
     
+    print("Number of short GRBs detected by GBM: "
+          + str(RecSimDict["lensgbm"]))
+    print(ratiogbm)
+    print(ratiobc)
+    print('fraction of GBM sGRBs BC will detect = %0.2f' % (ratiobc/ratiogbm))
+    print('bc rate = %.2f' % bcbursts+' sGRBs/yr')
+    print("duty cycle to detect 20 sGRBs/yr = %.2f" % duty)
+    print("duty cycle to detect 10 sGRBs/yr = %.2f" % (duty/2.))
     print("flux limit to detect 10 sGRBs/yr = %.2f" % fluxlim10 + ' ph/cm2/s')
     print("flux limit to detect 20 sGRBs/yr = %.2f" % fluxlim20+' ph/cm2/s')
     print('expected minimum flux = '+"%.2f" %
@@ -187,9 +194,7 @@ def printRun(RecSimDict):
                                   min(simbcpfsample[wbc]))
     print("%.2f" % distGBM + ' Mpc - distance GBM for GW170817')
     print("%.2f" % distBC + ' Mpc - distance BC for GW170817')
-    
-
-    
+        
     #  mission lifetime to detect 10 sGRBs
     print("Mission Duration to detect 10 sGRBs = " + "%.1f" %
           (10./bcbursts*12.)+' months')
