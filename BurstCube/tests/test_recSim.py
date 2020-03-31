@@ -1,6 +1,32 @@
 import numpy as np
 
 
+def test_Run():
+
+    """Tests the full simulation.  Checks a lot of numbers."""
+    
+    import BurstCube.ReqSim.BurstCube_requirements_simulations as BRS
+
+    RecSimDict = BRS.run()
+    simbcpfsample = RecSimDict["simbcpfsample"]
+    wbc = RecSimDict["wbc"]
+    so = RecSimDict["so"]
+
+    minFlux = min(simbcpfsample[wbc[so]])
+    maxFlux = max(simbcpfsample[wbc[so]])
+    duration = (10./RecSimDict["bcbursts"]*12.)
+    
+    assert(395 == RecSimDict["lensgbm"])
+    assert(np.abs(0.3349 - RecSimDict["ratiogbm"]) < 0.01)
+    assert(np.abs(0.1654 - RecSimDict["ratiobc"]) < 0.01)
+    assert(np.abs(19.76 - RecSimDict["bcbursts"]) < 1.0)
+    assert(np.abs(0.86 - RecSimDict["duty"]) < 0.1)
+    assert(np.abs(3.69 - RecSimDict["fluxlim10"]) < 0.01)
+    assert(np.abs(1.28 - minFlux) < 0.001)
+    assert(np.abs(158.49 - maxFlux) < 0.001)
+    assert(np.abs(6.0 - duration) < 0.5)
+    
+
 def test_load_mission():
 
     """Test the load_mission function.  For each mission in the list it
