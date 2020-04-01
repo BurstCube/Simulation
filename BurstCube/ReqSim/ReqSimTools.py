@@ -103,7 +103,7 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
 
     sc = Spacecraft(pointings, lat=lat, lon=lon)
 
-    return sc, pointings, Aeff, index
+    return sc, Aeff, index
 
 
 def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
