@@ -71,6 +71,11 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     bgrate : float
         Background rate in cts/s over 50 - 300 keV (default 300)
 
+    Returns
+    ---------
+    RecSimDict : python dictionary
+        Dictionary with all of the results of the simulation.
+
         """
 
     RecSimDict = {}
