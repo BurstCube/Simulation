@@ -1,8 +1,5 @@
 import numpy as np
 import BurstCube.ReqSim.grb_catalogs as grb_catalogs
-#  from BurstCube.LocSim.Detector import *
-#  from BurstCube.LocSim.Spacecraft import *
-#  from gammaray_proposal_tools import *
 from BurstCube.ReqSim.gammaray_proposal_tools import loginterpol,\
     random_sky, load_GBM_catalogs
 from BurstCube.ReqSim.Mission import Mission
@@ -152,7 +149,6 @@ def run(ea_dir='', nsims=10000, minflux=0.5, interval=1.0, bgrate=300.):
     
     #  return realgbmflux,simgbmpfsample
 
-    
 def printRun(RecSimDict):
 
     fluxlim10 = RecSimDict["fluxlim10"]

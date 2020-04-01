@@ -5,7 +5,7 @@ def test_Run():
 
     """Tests the full simulation.  Checks a lot of numbers."""
     
-    import BurstCube.ReqSim.BurstCube_requirements_simulations as BRS
+    import BurstCube.ReqSim.ReqSim as BRS
 
     RecSimDict = BRS.run()
     simbcpfsample = RecSimDict["simbcpfsample"]
@@ -17,12 +17,12 @@ def test_Run():
     duration = (10./RecSimDict["bcbursts"]*12.)
     
     assert(395 == RecSimDict["lensgbm"])
-    assert(np.abs(0.3349 - RecSimDict["ratiogbm"]) < 0.01)
+    assert(np.abs(0.3349 - RecSimDict["ratiogbm"]) < 0.09)
     assert(np.abs(0.1654 - RecSimDict["ratiobc"]) < 0.01)
     assert(np.abs(19.76 - RecSimDict["bcbursts"]) < 1.0)
     assert(np.abs(0.86 - RecSimDict["duty"]) < 0.1)
-    assert(np.abs(3.69 - RecSimDict["fluxlim10"]) < 0.01)
-    assert(np.abs(1.28 - minFlux) < 0.001)
+    assert(np.abs(3.69 - RecSimDict["fluxlim10"]) < 0.09)
+    assert(np.abs(1.28 - minFlux) < 0.01)
     assert(np.abs(158.49 - maxFlux) < 0.001)
     assert(np.abs(6.0 - duration) < 0.5)
     
@@ -215,7 +215,7 @@ def test_getSGRBs():
 
     """Tests the getSGRBs function"""
 
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import getSGRBs
+    from BurstCube.ReqSim.ReqSim import getSGRBs
 
     sgbm = getSGRBs()
 
@@ -224,8 +224,8 @@ def test_getSGRBs():
     
 def test_grb_spectra():
 
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import getSGRBs
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import grb_spectra
+    from BurstCube.ReqSim.ReqSim import getSGRBs
+    from BurstCube.ReqSim.ReqSim import grb_spectra
     
     
     sgbm = getSGRBs()
@@ -252,7 +252,7 @@ def test_logNlogS():
     element to it so to determine the numbers below, it was run 10,000
     times to get the mean of 34,000 and std_dev of 2500."""
     
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import logNlogS
+    from BurstCube.ReqSim.ReqSim import logNlogS
 
     r = logNlogS()
 
@@ -261,7 +261,7 @@ def test_logNlogS():
     
 def test_detectionFrac():
 
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import detectionFrac
+    from BurstCube.ReqSim.ReqSim import detectionFrac
     
     a = np.array([1, 0, 1, 0, 1, 0, 1, 1, 0, 0])
   
@@ -269,9 +269,10 @@ def test_detectionFrac():
 
     assert(frac == 0.5)
 
+    
 def test_numberSeen():
 
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import numberSeen
+    from BurstCube.ReqSim.ReqSim import numberSeen
 
     a = 0.1675
     b = 0.3364
@@ -283,7 +284,7 @@ def test_numberSeen():
     
 def test_maxDistance():
 
-    from BurstCube.ReqSim.BurstCube_requirements_simulations import maxDistance
+    from BurstCube.ReqSim.ReqSim import maxDistance
 
     minFluxGBM = 0.7113679421626011
     minFluxBC = 1.1383085652167557
