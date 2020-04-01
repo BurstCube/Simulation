@@ -1,6 +1,6 @@
 import numpy as np
 import BurstCube.ReqSim.grb_catalogs as grb_catalogs
-from BurstCube.ReqSim.gammaray_proposal_tools import loginterpol,\
+from BurstCube.ReqSim.ReqSimTools import loginterpol,\
     random_sky, load_GBM_catalogs
 from BurstCube.ReqSim.Mission import Mission
 

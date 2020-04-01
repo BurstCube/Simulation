@@ -37,7 +37,7 @@ def test_load_mission():
 
     """
     
-    from BurstCube.ReqSim.gammaray_proposal_tools import load_mission
+    from BurstCube.ReqSim.ReqSimTools import load_mission
 
     missions = ('Bia', 'GBM', 'Fermi', 'HAM', 'Nimble', 'BATSE', 'BurstCube')
     Aeffs = (320., 132., 132., 132., 132., 1500., 61.)
@@ -56,7 +56,7 @@ def test_thetaphi2radec():
 
     """Tests the thetaphi2radec function."""
     
-    from BurstCube.ReqSim.gammaray_proposal_tools import thetaphi2radec
+    from BurstCube.ReqSim.ReqSimTools import thetaphi2radec
 
     ra, dec = thetaphi2radec(1.5, 3.0)
 
@@ -69,7 +69,7 @@ def test_plot_exposures():
     """Tests the plot_exposures function.  Uses the Bia as the baseline."""
 
     import json
-    from BurstCube.ReqSim.gammaray_proposal_tools import load_mission,\
+    from BurstCube.ReqSim.ReqSimTools import load_mission,\
         plot_exposures
 
     scA, Aeff, index = load_mission('Bia')
@@ -93,7 +93,7 @@ def test_num_detectors():
 
     """Tests the num_detectors function. Uses Bia as the baseline."""
 
-    from BurstCube.ReqSim.gammaray_proposal_tools import num_detectors,\
+    from BurstCube.ReqSim.ReqSimTools import num_detectors,\
         load_mission, plot_exposures
     
     sc, Aeff, index = load_mission('Bia')
@@ -116,7 +116,7 @@ def test_num_detectors_frac():
                   0.0185546875,
                   0.0015462239583333333]
     
-    from BurstCube.ReqSim.gammaray_proposal_tools import num_detectors,\
+    from BurstCube.ReqSim.ReqSimTools import num_detectors,\
         load_mission, plot_exposures, num_detectors_frac
 
     sc, Aeff, index = load_mission('Bia')
@@ -130,7 +130,7 @@ def test_num_detectors_frac():
 
 def test_colormap_skewed():
 
-    from BurstCube.ReqSim.gammaray_proposal_tools import load_mission,\
+    from BurstCube.ReqSim.ReqSimTools import load_mission,\
         plot_exposures, colormap_skewed
 
     sc, Aeff, index = load_mission('Bia')
@@ -145,7 +145,7 @@ def test_random_sky():
     """Tests the random sky function.  Just makes sure that the ra, dec
     pairs are in the right range. """
     
-    from BurstCube.ReqSim.gammaray_proposal_tools import random_sky
+    from BurstCube.ReqSim.ReqSimTools import random_sky
     
     ra, dec = random_sky(20)
 
@@ -160,7 +160,7 @@ def test_separation():
     function.  The tolerance on this seems a bit high.  In the future we
     should replace this function with the astropy one. """
 
-    from BurstCube.ReqSim.gammaray_proposal_tools import random_sky, separation
+    from BurstCube.ReqSim.ReqSimTools import random_sky, separation
     from astropy.coordinates import SkyCoord
 
     ra1, dec1 = random_sky(20)
@@ -179,7 +179,7 @@ def test_loginterpol():
 
     """Tests the loginterpol function"""
 
-    from BurstCube.ReqSim.gammaray_proposal_tools import loginterpol
+    from BurstCube.ReqSim.ReqSimTools import loginterpol
     
     x = np.array([50., 75.1462, 112.939, 169.739, 255.105, 383.404, 576.227,
                   866.025, 1301.57, 1956.16, 2939.97, 4418.55, 6640.74,
