@@ -25,6 +25,12 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
     Returns
     ---------
     Spacecraft : BurstCube Spacecraft Object
+    
+    Pointings : Instrument pointing dictionary
+    
+    Aeff: Effective Area cm2 at 100 keV
+    
+    index: Aeff ~cosine(theta)^index
 
     """
     missions = ('Bia', 'GBM', 'Fermi', 'HAM', 'Nimble', 'BATSE', 'BurstCube')
@@ -97,7 +103,7 @@ def load_mission(mission, lat=0., lon=np.radians(260.)):
 
     sc = Spacecraft(pointings, lat=lat, lon=lon)
 
-    return sc, Aeff, index
+    return sc, pointings, Aeff, index
 
 
 def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
@@ -179,7 +185,7 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
 
     if doplot:
         plot.figure(figsize=(20, npointings))
-        s = np.argsort(pointings.keys())
+        s = np.argsort(list(pointings.keys()))
         for j in range(npointings):
             i = s[j]
             hp.mollview(exposures[i]/max(exposures[i])*Aeff_fact,
@@ -193,7 +199,7 @@ def plot_exposures(pointings, Aeff_fact, index=1, lat=0., lon=np.radians(260.),
 
 
 def num_detectors(sc, exposure_positions, antiEarth=False, NSIDE=32,
-                  Earth=True, fov=60.):
+                  Earth=True, fov=60.,lat=0., lon=np.radians(260.)):
 
     """Short descrtiption of this function.
 
@@ -248,14 +254,14 @@ def num_detectors(sc, exposure_positions, antiEarth=False, NSIDE=32,
     cmap_skewed = colormap_skewed(exps)
 
     if Earth:
-        vec = hp.ang2vec(180, 0, lonlat=True)
-        i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+        vec = hp.ang2vec(180., 0, lonlat=True)
+        i = hp.query_disc(NSIDE, vec, np.radians(67.))
         fs_det[i] = 0
 
-    if antiEarth:
-        vec = hp.ang2vec(0, 0, lonlat=True)
-        i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
-        fs_det[i] = 0
+#     if antiEarth:
+#         vec = hp.ang2vec(0, 0, lonlat=True)
+#         i = hp.query_disc(NSIDE, vec, 67*np.pi/180.)
+#         fs_det[i] = 0
 
     hp.mollview(fs_det, title='Overlap of Detectors', cmap=cmap_skewed)
 
