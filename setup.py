@@ -9,7 +9,8 @@ setup(name='BurstCube',
       author_email='jsperki1@umd.edu',
       url='https://github.com/BurstCube',
       include_package_data=True,
-      packages=['BurstCube', 'BurstCube.LocSim', 'BurstCube.NoahSim'],
+      packages=['BurstCube', 'BurstCube.LocSim',
+                'BurstCube.NoahSim', 'BurstCube.ReqSim'],
       scripts=['BurstCube/scripts/runSims'],
       package_data={
           'BurstCube': ['data/*.sim',
@@ -17,6 +18,9 @@ setup(name='BurstCube',
                         'data/BurstCube_1Cylinder.geo.setup',
                         'data/config.yaml',
                         'data/gbm_effective_area.dat',
+                        'data/BC_eff_area_curves.ecsv',
+                        'data/gbmtrigcat.fits',
+                        'data/gbmgrbcat.fits',
                         'data/*.gz']
           }
       )
